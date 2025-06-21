@@ -16,7 +16,7 @@ API_KEY = os.getenv("API_KEY")
 client = genai.Client(api_key=API_KEY)
 
 # Scopes: change to 'readonly' if you just want to read
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 
 def get_credentials():
