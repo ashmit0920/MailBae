@@ -4,7 +4,12 @@ import pickle
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from google import genai
 import email
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Scopes: change to 'readonly' if you just want to read
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
@@ -29,8 +34,25 @@ def get_credentials():
     return creds
 
 
+def get_body_from_payload(payload):
+    parts = payload.get("parts")
+
+    if parts:
+        for part in parts:
+            if part["mimeType"] == "text/plain":
+                data = part["body"]["data"]
+                return base64.urlsafe_b64decode(data).decode("utf-8")
+    else:
+        # In case there's no multipart (some emails are simple)
+        data = payload["body"].get("data")
+        if data:
+            return base64.urlsafe_b64decode(data).decode("utf-8")
+
+    return "No plain text body found"
+
+
 def list_messages(service):
-    results = service.users().messages().list(userId='me', maxResults=10).execute()
+    results = service.users().messages().list(userId='me', maxResults=5).execute()
     messages = results.get('messages', [])
 
     if not messages:
@@ -46,10 +68,14 @@ def list_messages(service):
             sender = next(
                 (h['value'] for h in headers if h['name'] == 'From'), 'Unknown Sender')
             snippet = msg_data.get('snippet', '')
+            body = get_body_from_payload(msg_data['payload'])
 
             print(f"🧑 From: {sender}")
             print(f"📝 Subject: {subject}")
-            print(f"💬 Snippet: {snippet}\n{'-'*50}\n")
+            print(f"💬 Snippet: {snippet}\n")
+
+            if body != "No plain text body found":
+                print(f"📨 Body: {body}\n\n{'-'*50}\n\n")
 
 
 def main():
