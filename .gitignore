@@ -2,3 +2,4 @@ mailbae_client_secret.json
 .env
 token.pickle
 IDEAS.md
+__pycache__/

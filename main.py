@@ -4,16 +4,9 @@ import pickle
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from google import genai
 import email
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-API_KEY = os.getenv("API_KEY")
-
-client = genai.Client(api_key=API_KEY)
+from datetime import datetime, timezone
+from gemini import generate_summary
 
 # Scopes: change to 'readonly' if you just want to read
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
@@ -74,40 +67,52 @@ def list_messages(service):
             snippet = msg_data.get('snippet', '')
             body = get_body_from_payload(msg_data['payload'])
 
-            # print(f"🧑 From: {sender}")
-            # print(f"📝 Subject: {subject}")
-            # print(f"💬 Snippet: {snippet}\n")
+            print(f"🧑 From: {sender}")
+            print(f"📝 Subject: {subject}")
+            print(f"💬 Snippet: {snippet}\n")
+            print(f"📨 Body: {body}\n\n{'-'*50}\n\n")
 
-            # if body != "No plain text body found":
-            #     print(f"📨 Body: {body}\n\n{'-'*50}\n\n")
 
-            prompt = f"""You are smart, friendly and polite mail assistant. Analyze an email carefully and categorize it into one of the below categories:
-            1. IMPORTANT
-            2. PROMOTIONAL
-            3. SPAM
-            4. URGENT
+def fetch_todays_emails_and_summarize(service):
+    query = "in:anywhere newer_than:1d"  # Gmail query language
 
-            STRICTLY RETURN only the category in ONE WORD and NOTHING ELSE. In case their is no body content available simply return "NO CONTENT".
-            
-            Below is the email content:
-            ---
-            From: {sender}
-            Subject: {subject}
-            Snippet: {snippet}
-            Body: \n{body}
-            ---
-            """
+    results = service.users().messages().list(
+        userId='me', q=query, maxResults=100).execute()
+    messages = results.get('messages', [])
 
-            res = client.models.generate_content(
-                model="gemini-2.0-flash", contents=prompt)
+    emails_data = []
 
-            print(res.text)
+    for msg in messages:
+        msg_data = service.users().messages().get(
+            userId='me', id=msg['id'], format='full').execute()
+
+        headers = msg_data['payload'].get('headers', [])
+        subject = next((h['value']
+                       for h in headers if h['name'] == 'Subject'), 'No Subject')
+        sender = next((h['value'] for h in headers if h['name']
+                      == 'From'), 'Unknown Sender')
+        body = get_body_from_payload(msg_data['payload'])
+
+        if body == 'No plain text body found':  # currently only plain text body
+            emails_data.append({
+                'from': sender,
+                'subject': subject,
+                'body': body
+            })
+        print(sender, ":", msg_data['labelIds'], end="\n")
+
+    if emails_data:
+        summary = generate_summary(emails_data)
+        print("\n📬 Daily Summary:\n", summary)
+        # print(emails_data)
+    else:
+        print("No emails found for today.")
 
 
 def main():
     creds = get_credentials()
     service = build('gmail', 'v1', credentials=creds)
-    list_messages(service)
+    fetch_todays_emails_and_summarize(service)
 
 
 if __name__ == '__main__':

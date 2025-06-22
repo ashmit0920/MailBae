@@ -41,3 +41,23 @@ def generate_reply(sender, subject, snippet, body):
         },)
 
     print(res.text)
+
+
+def generate_summary(EMAILS):
+    prompt = f"""You are a smart, friendly and polite email assistant. You are being given a list of emails, in a JSON format with 3 fields for each email - 'from', 'subject' and 'body'.
+    Analyze all the given emails carefully and generate a clear, concise and to-the-point summary for all these emails. Avoid jargon and use simple, human language.
+    You should include ALL THE IMPORTANT and urgent points in the summary, while promotional emails could be given less importance.
+    You can mention the senders for the important emails if required as well.
+
+    **STRICTLY RETURN ONLY THE SUMMARY IN ONE PARAGRAPH AND NOTHING ELSE.** 
+            
+    Below are the emails in JSON format:
+    ---
+    {EMAILS}
+    ---
+    """
+
+    res = client.models.generate_content(
+        model="gemini-2.0-flash", contents=prompt)
+
+    return res.text
