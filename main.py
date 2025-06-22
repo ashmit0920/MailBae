@@ -99,7 +99,8 @@ def fetch_todays_emails_and_summarize(service):
                 'subject': subject,
                 'body': body
             })
-        print(sender, ":", msg_data['labelIds'], end="\n")
+
+        # print(sender, ":", msg_data['labelIds'], end="\n")
 
     if emails_data:
         summary = generate_summary(emails_data)
