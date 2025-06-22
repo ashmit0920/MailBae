@@ -103,6 +103,7 @@ def fetch_todays_emails_and_summarize(service):
     if emails_data:
         summary = generate_summary(emails_data)
         print("\n📬 Daily Summary:\n", summary)
+        return summary
         # print(emails_data)
     else:
         print("No emails found for today.")
@@ -111,7 +112,5 @@ def fetch_todays_emails_and_summarize(service):
 def email_summarizer():
     creds = get_credentials()
     service = build('gmail', 'v1', credentials=creds)
-    fetch_todays_emails_and_summarize(service)
-
-# if __name__ == '__main__':
-#     email_summarizer()
+    summary = fetch_todays_emails_and_summarize(service)
+    return summary

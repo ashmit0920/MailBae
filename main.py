@@ -37,10 +37,9 @@ def health_check():
 
 
 @app.post("/api/summarize")
-def summarize_emails(email_list: EmailList):
+def summarize_emails():
     try:
-        summary = email_summarizer(
-            [e.dict() for e in email_list.emails])
+        summary = email_summarizer()
         return {"summary": summary}
 
     except Exception as e:
