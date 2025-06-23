@@ -46,7 +46,7 @@ export default function HowItWorks() {
   };
 
   return (
-    <section id="how-it-works" className="py-24 bg-gray-50">
+    <section id="how-it-works" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -54,7 +54,7 @@ export default function HowItWorks() {
             How It Works
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Get started in minutes with our simple 4-step process
+            Get started in just a few clicks.
           </p>
         </div>
 
@@ -107,11 +107,10 @@ export default function HowItWorks() {
                 <button
                   key={index}
                   onClick={() => setCurrentStep(index)}
-                  className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                    index === currentStep
-                      ? 'bg-blue-500'
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-colors duration-200 ${index === currentStep
+                    ? 'bg-blue-500'
+                    : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
                 />
               ))}
             </div>

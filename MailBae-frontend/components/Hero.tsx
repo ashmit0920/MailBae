@@ -21,7 +21,7 @@ export default function Hero() {
         </div>
 
         {/* Main Title */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
           MailBae:{' '}
           <span className="bg-gradient-to-r from-blue-500 to-purple-700 text-transparent bg-clip-text inline-block">Your Inbox's BFF</span>
         </h1>
@@ -65,7 +65,7 @@ export default function Hero() {
         {/* Social Proof */}
         <div className="mt-16 flex items-center justify-center space-x-8 text-gray-500">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">10K+</div>
+            <div className="text-2xl font-bold text-gray-900">5K+</div>
             <div className="text-sm">Happy Users</div>
           </div>
           <div className="w-px h-12 bg-gray-300"></div>

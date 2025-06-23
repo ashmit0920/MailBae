@@ -10,7 +10,7 @@ const features = [
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-24 bg-white">
+    <section id="pricing" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -26,7 +26,7 @@ export default function Pricing() {
         <div className="max-w-md mx-auto">
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 border-2 border-blue-200 relative overflow-hidden">
             {/* Popular Badge */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mt-8">
               <div className="bg-blue-500 text-white px-6 py-2 rounded-full text-sm font-semibold flex items-center space-x-1">
                 <Star className="w-4 h-4 fill-current" />
                 <span>Most Popular</span>
@@ -34,7 +34,7 @@ export default function Pricing() {
             </div>
 
             {/* Plan Name */}
-            <div className="text-center mb-8 mt-4">
+            <div className="text-center mb-8 mt-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Personal</h3>
               <p className="text-gray-600">Perfect for individuals</p>
             </div>
@@ -42,7 +42,7 @@ export default function Pricing() {
             {/* Price */}
             <div className="text-center mb-8">
               <div className="flex items-baseline justify-center">
-                <span className="text-5xl font-bold text-gray-900">$5</span>
+                <span className="text-5xl font-bold text-gray-900">$4.99</span>
                 <span className="text-lg text-gray-500 ml-1">/month</span>
               </div>
               <p className="text-sm text-gray-500 mt-2">Billed monthly</p>
