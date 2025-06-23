@@ -12,8 +12,9 @@ import {
   Transition,
   type VariantLabels,
   type Target,
-  type AnimationControls,
+  type animationControls,
   type TargetAndTransition,
+  type MotionProps
 } from "framer-motion";
 
 function cn(...classes: (string | undefined | null | boolean)[]): string {
@@ -28,15 +29,8 @@ export interface RotatingTextRef {
 }
 
 export interface RotatingTextProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof motion.span>,
-    "children" | "transition" | "initial" | "animate" | "exit"
-  > {
+  extends Omit<MotionProps, "custom" | "style" | "children"> {
   texts: string[];
-  transition?: Transition;
-  initial?: boolean | Target | VariantLabels;
-  animate?: boolean | VariantLabels | AnimationControls | TargetAndTransition;
-  exit?: Target | VariantLabels;
   animatePresenceMode?: "sync" | "wait";
   animatePresenceInitial?: boolean;
   rotationInterval?: number;
@@ -50,6 +44,7 @@ export interface RotatingTextProps
   splitLevelClassName?: string;
   elementLevelClassName?: string;
 }
+
 
 const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
   (
@@ -203,7 +198,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
     return (
       <motion.span
         className={cn(
-          "flex flex-wrap whitespace-pre-wrap relative",
+          "inline-flex whitespace-pre-wrap relative",
           mainClassName,
         )}
         {...rest}
@@ -219,12 +214,14 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
             key={currentTextIndex}
             className={cn(
               splitBy === "lines"
-                ? "flex flex-col w-full"
-                : "flex flex-wrap whitespace-pre-wrap relative",
+                ? "flex flex-col" // ❌ remove w-full!
+                : "inline-flex", // ✅ prevents stretching
             )}
             layout
+            transition={{ duration: 0.3, ease: "easeInOut" }} // optional override
             aria-hidden="true"
           >
+
             {elements.map((wordObj, wordIndex, array) => {
               const previousCharsCount = array
                 .slice(0, wordIndex)

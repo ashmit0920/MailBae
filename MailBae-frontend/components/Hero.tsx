@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Star } from 'lucide-react';
+import RotatingText from './ui/RotatingText/RotatingText';
 
 export default function Hero() {
   const scrollToSection = (sectionId: string) => {
@@ -14,20 +15,37 @@ export default function Hero() {
     <section className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-white flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto text-center">
         {/* Trial Badge */}
-        <div className="inline-flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium mb-8">
+        <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-700 text-white px-4 py-2 rounded-full text-sm font-medium mb-8">
           <Star className="w-4 h-4 fill-current" />
           <span>7-day FREE trial</span>
         </div>
 
         {/* Main Title */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-          Meet MailBae:{' '}
-          <span className="text-blue-500">Your Inbox's New BFF</span>
+          MailBae:{' '}
+          <span className="bg-gradient-to-r from-blue-500 to-purple-700 text-transparent bg-clip-text inline-block">Your Inbox's BFF</span>
         </h1>
 
+        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+          Trusted by
+
+          <RotatingText
+            texts={['professionals', 'freelancers', 'individuals', 'businesses', 'students']}
+            mainClassName="px-2 sm:px-2 md:px-3 text-2xl sm:text-3xl lg:text-4xl font-bold overflow-hidden justify-center"
+            staggerFrom="last"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "-120%" }}
+            staggerDuration={0.025}
+            splitLevelClassName="bg-blue-500 text-white py-1 sm:py-1.5 md:py-2 px-3 rounded-lg inline-flex overflow-hidden"
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            rotationInterval={2000}
+          />
+        </h3>
+
         {/* Description */}
-        <p className="text-lg sm:text-xl text-gray-700 font-medium mb-12 max-w-3xl mx-auto leading-relaxed">
-          Tired of drowning in unread emails? MailBae's AI-powered responder sorts, replies, and summarizes your day's mail—so you can focus on what really matters. Zero setup, zero headaches.
+        <p className="text-lg sm:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+          Tired of drowning in unread emails? MailBae's AI-powered responder sorts, replies, and summarizes your day's mail. So you can focus on what really matters. <br></br>Zero setup, zero headaches.
         </p>
 
         {/* CTA Buttons */}
