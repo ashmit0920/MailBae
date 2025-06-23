@@ -1,14 +1,21 @@
 'use client';
 
 import { ArrowRight, Star } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import RotatingText from './ui/RotatingText/RotatingText';
 
 export default function Hero() {
+  const router = useRouter();
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleGetStarted = () => {
+    router.push('/auth');
   };
 
   return (
@@ -50,7 +57,7 @@ export default function Hero() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-          <button className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
+          <button onClick={handleGetStarted} className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
             <span>Get Started</span>
             <ArrowRight className="w-5 h-5" />
           </button>

@@ -27,7 +27,7 @@ export default function Pricing() {
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 border-2 border-blue-200 relative overflow-hidden">
             {/* Popular Badge */}
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mt-8">
-              <div className="bg-blue-500 text-white px-6 py-2 rounded-full text-sm font-semibold flex items-center space-x-1">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-700 text-white px-6 py-2 rounded-full text-sm font-semibold flex items-center space-x-1">
                 <Star className="w-4 h-4 fill-current" />
                 <span>Most Popular</span>
               </div>

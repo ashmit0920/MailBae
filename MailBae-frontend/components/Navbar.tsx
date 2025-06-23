@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { Mail } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -22,13 +24,16 @@ export default function Navbar() {
     }
   };
 
+  const handleLogin = () => {
+    router.push('/auth');
+  };
+
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-        isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100'
-          : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${isScrolled
+        ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100'
+        : 'bg-transparent'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -58,14 +63,14 @@ export default function Navbar() {
             >
               Testimonials
             </button>
-            <button className="border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-6 py-2 rounded-full font-medium transition-all duration-200">
+            <button onClick={handleLogin} className="border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-6 py-2 rounded-full font-medium transition-all duration-200">
               Login
             </button>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <button className="border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-200">
+            <button onClick={handleLogin} className="border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-200">
               Login
             </button>
           </div>
