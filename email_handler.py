@@ -4,6 +4,8 @@ import pickle
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from bs4 import BeautifulSoup
+
 from gemini import generate_summary
 
 # Scopes: change to 'readonly' if you just want to read
@@ -30,20 +32,54 @@ def get_credentials():
 
 
 def get_body_from_payload(payload):
-    parts = payload.get("parts")
+    # Extracts the plain text or HTML content from an email payload.
 
-    if parts:
+    # Try top-level part first
+    mime_type = payload.get("mimeType")
+    body_data = payload.get("body", {}).get("data")
+
+    if mime_type == "text/plain" and body_data:
+        return decode_body(body_data)
+
+    if mime_type == "text/html" and body_data:
+        html_content = decode_body(body_data)
+        return extract_text_from_html(html_content)
+
+    # For multipart emails
+    def extract_parts(parts):
         for part in parts:
-            if part["mimeType"] == "text/plain":
-                data = part["body"]["data"]
-                return base64.urlsafe_b64decode(data).decode("utf-8")
-    else:
-        # In case there's no multipart (some emails are simple)
-        data = payload["body"].get("data")
-        if data:
-            return base64.urlsafe_b64decode(data).decode("utf-8")
+            mime_type = part.get("mimeType")
+            body_data = part.get("body", {}).get("data")
 
-    return "No plain text body found"
+            if mime_type == "text/plain" and body_data:
+                return decode_body(body_data)
+
+            if mime_type == "text/html" and body_data:
+                html_content = decode_body(body_data)
+                return extract_text_from_html(html_content)
+
+            # Recursively search nested parts (for multipart/* type emails)
+            if part.get("parts"):
+                result = extract_parts(part["parts"])
+                if result:
+                    return result
+
+        return "[No readable body found]"
+
+    return extract_parts(payload.get("parts", [])) or "[No readable body found]"
+
+
+def decode_body(data):
+    return base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
+
+
+def extract_text_from_html(html_content):
+    soup = BeautifulSoup(html_content, "html.parser")
+    text = soup.get_text(separator="\n").strip()
+    lines = text.splitlines()
+    # remove excess blank lines from text, just to keep it clean
+    clean_lines = [line.strip() for line in lines if line.strip()]
+    return "\n".join(clean_lines)
 
 
 def list_messages(service):
@@ -91,14 +127,13 @@ def fetch_todays_emails_and_summarize(service):
                       == 'From'), 'Unknown Sender')
         body = get_body_from_payload(msg_data['payload'])
 
-        if body == 'No plain text body found':  # currently only plain text body
-            emails_data.append({
-                'from': sender,
-                'subject': subject,
-                'body': body
-            })
+        emails_data.append({
+            'from': sender,
+            'subject': subject,
+            'body': body
+        })
 
-        # print(sender, ":", msg_data['labelIds'], end="\n")
+        # print(f"{sender} \n {body} \n\n")
 
     if emails_data:
         summary = generate_summary(emails_data)
