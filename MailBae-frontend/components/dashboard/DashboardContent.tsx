@@ -4,6 +4,7 @@ import { Menu, Bell, Search } from 'lucide-react';
 import StatCard from './StatCard';
 import RecentAlerts from './RecentAlerts';
 import TodaySummary from './TodaySummary';
+import SummaryDemo from './SummaryDemo';
 
 interface DashboardContentProps {
   onMenuClick: () => void;
@@ -18,6 +19,7 @@ export default function DashboardContent({ onMenuClick, activeSection }: Dashboa
           <div className="bg-white rounded-2xl shadow-sm p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Email Summaries</h2>
             <p className="text-gray-600">Your email summaries will appear here.</p>
+            <SummaryDemo />
           </div>
         );
       case 'insights':
