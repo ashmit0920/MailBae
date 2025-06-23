@@ -9,16 +9,16 @@ export default function WelcomePage() {
   const [activeSection, setActiveSection] = useState('dashboard');
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar 
+    <div className="min-h-screen bg-gray-50 flex">
+      <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-      
-      <div className="lg:pl-64">
-        <DashboardContent 
+
+      <div className="flex-1 flex flex-col lg:ml-0">
+        <DashboardContent
           onMenuClick={() => setSidebarOpen(true)}
           activeSection={activeSection}
         />
