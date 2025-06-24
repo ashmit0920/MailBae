@@ -13,6 +13,11 @@ class EmailReply(BaseModel):
     reply: str
 
 
+class Summary(BaseModel):
+    category: str
+    points: list[str]
+
+
 client = genai.Client(api_key=API_KEY)
 
 
@@ -48,9 +53,33 @@ def generate_summary(EMAILS):
     Analyze all the given emails carefully and generate a clear, concise and to-the-point summary for all these emails. Avoid jargon and use simple, human language.
     You should include ALL THE IMPORTANT and urgent points in the summary, while promotional emails could be given less importance.
     You can mention the senders for the important emails if required as well.
+    Keep one sentence for each email (or one sentence for each sender if there are multiple emails from the same sender and could be clubbed together).
+    Additionally, after summarizing categorize each sentence into a category like "Work", "Promotional", "Newsletter", "Personal". Stick to these 4 categories only, in case there are no emails belonging to one of these categories then you can simply leave it.
+    
+    OUTPUT FORMAT:
+    **STRICTLY RETURN A JSON WITH 2 KEYS - "category" AND "points". The value of "points" should be a list of one-sentence summaries that you wrote, each representing an email from that particular category.**
 
-    **STRICTLY RETURN ONLY THE SUMMARY IN ONE PARAGRAPH AND NOTHING ELSE.** 
-            
+    Sample JSON Output (the sentences should be longer, this is just an example):
+
+    [
+        {{
+            "category": "Work",
+            "points": [
+            "You received a report from the finance team.",
+            "Client X scheduled a meeting for tomorrow.",
+            "GitHub Actions failed on build step."
+            ]
+        }},
+        {{
+            "category": "Promotional",
+            "points": [
+            "New job opportunities at multiple companies, apply now at jobboard.com.",
+            "Spotify is offering 3 months of premium for $5."
+            ]
+        }}
+    ]
+
+
     Below are the emails in JSON format:
     ---
     {EMAILS}
@@ -58,6 +87,9 @@ def generate_summary(EMAILS):
     """
 
     res = client.models.generate_content(
-        model="gemini-2.0-flash", contents=prompt)
+        model="gemini-2.0-flash", contents=prompt, config={
+            "response_mime_type": "application/json",
+            "response_schema": list[Summary],
+        })
 
     return res.text

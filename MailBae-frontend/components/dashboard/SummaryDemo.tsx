@@ -17,6 +17,7 @@ export default function SummaryDemo() {
 
                 const data = await res.json();
                 setSummary(data.summary);
+                const bullets = summary?.match(/[^.!?]+[.!?]/g) || []; //bullets
             } catch (err) {
                 console.error("Failed to fetch summary:", err);
             } finally {
@@ -32,7 +33,7 @@ export default function SummaryDemo() {
             {loading ? (
                 <p>Loading summary...</p>
             ) : (
-                <pre className="text-gray-600 whitespace-pre-wrap">{summary}</pre>
+                <p className="text-gray-600 whitespace-pre-wrap">{summary}</p>
             )}
         </div>
     );

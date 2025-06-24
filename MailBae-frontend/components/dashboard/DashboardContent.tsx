@@ -18,8 +18,8 @@ export default function DashboardContent({ onMenuClick, activeSection }: Dashboa
         return (
           <div className="bg-white rounded-2xl shadow-sm p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Email Summaries</h2>
-            <p className="text-gray-600">Your email summaries will appear here.</p>
-            <SummaryDemo />
+            <p className="text-gray-600 whitespace-pre-wrap">Ashmit, your registration for the Adobe India Hackathon is initiated but pending confirmation from team members by July 10, 2025. Unstop highlights job opportunities from Mercedes-Benz, NOCAP and 30K+ employers and opportunities to win prizes. Spotify is offering 3 months of Premium for ₹59, ending soon. SPR Placement shared an invite for Flipkart GRiD 7.0 and announced that 8 students from Thapar University received Pre-Placement Offers from ZS Campus Beats 2025-26. NVIDIA is hosting a webinar on July 24, 2025, about accelerating applications on GPUs, offering a free training course for attendees. A computer vision internship at Rebec Technologies is available through VentureLab Thapar. IIC is hosting an online guest lecture on June 26, 2025, with Mr. Sunil Kumar from Bank of America, discussing innovation through agility and inclusive technology. Gurpal Singh Chhabra forwarded an invite to a June CTF Challenge focused on Reverse Engineering & Malware Analysis. CoE-Data Science and AI (CoDSaI) announced the Israeli-Indian Hackathon on Restorative Healthcare with a PPT submission deadline of July 24, 2025, and a total prize of INR 100,000, plus internship opportunities. GirlScript Foundation invites you to join “Education Outreach” as a mentor or leader.</p>
+            {/* <SummaryDemo /> */}
           </div>
         );
       case 'insights':

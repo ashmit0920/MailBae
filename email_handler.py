@@ -149,3 +149,6 @@ def email_summarizer():
     service = build('gmail', 'v1', credentials=creds)
     summary = fetch_todays_emails_and_summarize(service)
     return summary
+
+
+email_summarizer()
