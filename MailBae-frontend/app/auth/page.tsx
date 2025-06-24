@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Eye, EyeOff } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -26,13 +27,37 @@ export default function AuthPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // Redirect to welcome page after successful auth
+    try {
+      if (isLogin) {
+        // Login logic
+        const { error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (error) throw error;
+      } else {
+        // Signup logic
+        const { error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: { username: formData.username }, // you can store extra fields like username
+          },
+        });
+
+        if (error) throw error;
+      }
+
+      // On success, go to welcome page
       router.push('/welcome');
-    }, 1500);
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-white flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -47,8 +72,8 @@ export default function AuthPage() {
             {isLogin ? 'Welcome back' : 'Create your account'}
           </h2>
           <p className="text-gray-600 mt-2">
-            {isLogin 
-              ? 'Sign in to your MailBae account' 
+            {isLogin
+              ? 'Sign in to your MailBae account'
               : 'Start managing your emails smarter'
             }
           </p>
