@@ -9,9 +9,10 @@ import SummaryCards from './SummaryCards';
 interface DashboardContentProps {
   onMenuClick: () => void;
   activeSection: string;
+  username: string;
 }
 
-export default function DashboardContent({ onMenuClick, activeSection }: DashboardContentProps) {
+export default function DashboardContent({ onMenuClick, activeSection, username }: DashboardContentProps) {
   const renderContent = () => {
     switch (activeSection) {
       case 'summaries':
@@ -95,7 +96,7 @@ export default function DashboardContent({ onMenuClick, activeSection }: Dashboa
               </button>
               <div className="ml-4 lg:ml-0">
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Welcome back, Sarah 👋
+                  Welcome back, {username}
                 </h1>
               </div>
             </div>
