@@ -137,7 +137,7 @@ def fetch_todays_emails_and_summarize(service):
 
     if emails_data:
         summary = generate_summary(emails_data)
-        print("\n📬 Daily Summary:\n", summary)
+        # print("\n📬 Daily Summary:\n", summary)
         return summary
         # print(emails_data)
     else:
@@ -149,6 +149,3 @@ def email_summarizer():
     service = build('gmail', 'v1', credentials=creds)
     summary = fetch_todays_emails_and_summarize(service)
     return summary
-
-
-email_summarizer()

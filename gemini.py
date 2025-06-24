@@ -57,9 +57,13 @@ def generate_summary(EMAILS):
     Additionally, after summarizing categorize each sentence into a category like "Work", "Promotional", "Newsletter", "Personal". Stick to these 4 categories only, in case there are no emails belonging to one of these categories then you can simply leave it.
     
     OUTPUT FORMAT:
-    **STRICTLY RETURN A JSON WITH 2 KEYS - "category" AND "points". The value of "points" should be a list of one-sentence summaries that you wrote, each representing an email from that particular category.**
+    **STRICTLY RETURN A JSON WITH EACH OBJECT HAVING 2 KEYS - "category" AND "points". The value of "points" should be a list of one-sentence summaries that you wrote, each representing an email from that particular category.**
+    MAKE SURE THAT EACH CATEGORY KEY APPEARS ONLY ONCE (AT MAX) IN THE JSON - meaning that all emails belonging to the same category are grouped together in one single JSON object.
+    Do not create multiple separate objects for the same category.
+    Each object in the final output should have a unique category field and an associated list of bullet points under the points array.
 
-    Sample JSON Output (the sentences should be longer, this is just an example):
+
+    Sample JSON Output (the sentences could be longer, this is just an example):
 
     [
         {{
