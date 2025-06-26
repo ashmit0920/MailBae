@@ -35,7 +35,7 @@ export default function Sidebar({ isOpen, onClose, activeSection, onSectionChang
       console.error('Logout failed:', error.message)
     } else {
       // Optional: Redirect user to login or home page
-      router.push('/login')
+      router.push('/auth')
     }
   }
 

@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+import pytz
 import os.path
 import base64
 import pickle
@@ -82,29 +84,32 @@ def extract_text_from_html(html_content):
     return "\n".join(clean_lines)
 
 
-def list_messages(service):
-    results = service.users().messages().list(userId='me', maxResults=5).execute()
+def build_gmail_query(since_hour=9):
+    # Get current time in your timezone
+    tz = pytz.timezone("Asia/Kolkata")
+    now = datetime.now(tz)
+
+    # Get today’s date at 9 AM
+    start_time = now.replace(hour=since_hour, minute=0,
+                             second=0, microsecond=0)
+
+    # Convert to Gmail timestamp (UNIX epoch in seconds)
+    after_timestamp = int(start_time.timestamp())
+
+    # Gmail supports `after:` filter with timestamp in seconds
+    return f"after:{after_timestamp}"
+
+
+def no_of_emails():
+    query = build_gmail_query()  # -> "after:1729813800"
+
+    creds = get_credentials()
+    service = build('gmail', 'v1', credentials=creds)
+    results = service.users().messages().list(
+        userId='me', q=query, maxResults=100).execute()
+
     messages = results.get('messages', [])
-
-    if not messages:
-        print("No messages found.")
-    else:
-        print(f"📩 Showing latest {len(messages)} emails:\n")
-        for msg in messages:
-            msg_data = service.users().messages().get(
-                userId='me', id=msg['id'], format='full').execute()
-            headers = msg_data['payload']['headers']
-            subject = next(
-                (h['value'] for h in headers if h['name'] == 'Subject'), 'No Subject')
-            sender = next(
-                (h['value'] for h in headers if h['name'] == 'From'), 'Unknown Sender')
-            snippet = msg_data.get('snippet', '')
-            body = get_body_from_payload(msg_data['payload'])
-
-            print(f"🧑 From: {sender}")
-            print(f"📝 Subject: {subject}")
-            print(f"💬 Snippet: {snippet}\n")
-            print(f"📨 Body: {body}\n\n{'-'*50}\n\n")
+    print(len(messages))
 
 
 def fetch_todays_emails_and_summarize(service):
