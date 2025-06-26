@@ -35,8 +35,6 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
         .eq('username', username)
         .single();
 
-      console.log('Fetched metrics:', data);
-
       if (error) {
         console.error('Error fetching metrics:', error);
       } else {
