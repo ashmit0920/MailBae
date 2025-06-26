@@ -37,19 +37,49 @@ export default function AuthPage() {
 
         if (error) throw error;
       } else {
-        // Signup logic
-        const { error } = await supabase.auth.signUp({
+        // 1. Check if username is taken
+        const { data: existingUser, error: checkError } = await supabase
+          .from('dashboard_metrics')
+          .select('username')
+          .eq('username', formData.username);
+
+        if (checkError) throw checkError;
+
+        if (existingUser && existingUser.length > 0) {
+          alert('Username already taken! Please choose another.');
+          setIsLoading(false);
+          return;
+        }
+
+        // 2. Sign up the user
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
-            data: { username: formData.username }, // you can store extra fields like username
+            data: { username: formData.username },
           },
         });
 
-        if (error) throw error;
+        if (signUpError) throw signUpError;
+
+        // 3. Insert dashboard_metrics row for the new user
+        const { error: insertError } = await supabase.from('dashboard_metrics').insert([
+          {
+            username: formData.username,
+            emails_processed: 0,
+            summaries_generated: 0,
+            time_saved: 0,
+            auto_replies: 0,
+          },
+        ]);
+
+        if (insertError) {
+          console.error('Error inserting metrics row:', insertError);
+          alert('Signup successful, but there was a problem setting up your dashboard.');
+        }
       }
 
-      // On success, go to welcome page
+      // ✅ Redirect to dashboard
       router.push('/welcome');
     } catch (error: any) {
       alert(error.message);
@@ -57,6 +87,7 @@ export default function AuthPage() {
       setIsLoading(false);
     }
   };
+
 
 
   return (

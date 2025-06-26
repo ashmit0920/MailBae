@@ -26,14 +26,12 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!username) return; // wait for username to be defined
+    if (!username) return;
 
     const fetchMetrics = async () => {
-      console.log("Username:", username);
-
       const { data, error } = await supabase
         .from('dashboard_metrics')
-        .select('emails_processed, summaries_generated, time_saved, auto_replies')
+        .select('emails_processed, time_saved, auto_replies, summaries_generated')
         .eq('username', username)
         .single();
 
@@ -54,7 +52,7 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
 
   if (loading) return <p className="text-center text-gray-500">Loading stats...</p>
 
-  if (!metrics) return <p className="text-center text-red-500">No metrics found</p>
+  if (!metrics) return <p className="text-center text-red-500">No metrics found {username}</p>
 
   const renderContent = () => {
     switch (activeSection) {
