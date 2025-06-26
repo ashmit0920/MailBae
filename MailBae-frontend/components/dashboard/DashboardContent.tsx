@@ -5,6 +5,8 @@ import StatCard from './StatCard';
 import RecentAlerts from './RecentAlerts';
 import TodaySummary from './TodaySummary';
 import SummaryCards from './SummaryCards';
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
 
 interface DashboardContentProps {
   onMenuClick: () => void;
@@ -12,7 +14,48 @@ interface DashboardContentProps {
   username: string;
 }
 
+interface UserMetrics {
+  emails_processed: number
+  summaries_generated: number
+  time_saved: number
+  auto_replies: number
+}
+
 export default function DashboardContent({ onMenuClick, activeSection, username }: DashboardContentProps) {
+  const [metrics, setMetrics] = useState<UserMetrics | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!username) return; // wait for username to be defined
+
+    const fetchMetrics = async () => {
+      console.log("Username:", username);
+
+      const { data, error } = await supabase
+        .from('dashboard_metrics')
+        .select('emails_processed, summaries_generated, time_saved, auto_replies')
+        .eq('username', username)
+        .single();
+
+      console.log('Fetched metrics:', data);
+
+      if (error) {
+        console.error('Error fetching metrics:', error);
+      } else {
+        setMetrics(data);
+      }
+
+      setLoading(false);
+    };
+
+    fetchMetrics();
+  }, [username]);
+
+
+  if (loading) return <p className="text-center text-gray-500">Loading stats...</p>
+
+  if (!metrics) return <p className="text-center text-red-500">No metrics found</p>
+
   const renderContent = () => {
     switch (activeSection) {
       case 'summaries':
@@ -43,28 +86,28 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <StatCard
                 title="Emails Processed"
-                value="1,247"
+                value={`${metrics.emails_processed}`}
                 change="+12%"
                 changeType="positive"
                 icon="📧"
               />
               <StatCard
                 title="Time Saved"
-                value="23.5h"
+                value={`${metrics.time_saved}h`}
                 change="+8%"
                 changeType="positive"
                 icon="⏰"
               />
               <StatCard
                 title="Auto Replies"
-                value="89"
+                value={`${metrics.auto_replies}`}
                 change="+15%"
                 changeType="positive"
                 icon="🤖"
               />
               <StatCard
-                title="Categories"
-                value="12"
+                title="Summaries Generated"
+                value={`${metrics.summaries_generated}`}
                 change="0%"
                 changeType="neutral"
                 icon="📊"

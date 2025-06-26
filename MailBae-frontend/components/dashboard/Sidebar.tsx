@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 import {
   Mail,
   BarChart3,
@@ -28,10 +29,16 @@ const navigation = [
 export default function Sidebar({ isOpen, onClose, activeSection, onSectionChange }: SidebarProps) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    // Simulate logout
-    router.push('/');
-  };
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error('Logout failed:', error.message)
+    } else {
+      // Optional: Redirect user to login or home page
+      router.push('/login')
+    }
+  }
+
 
   return (
     <>
