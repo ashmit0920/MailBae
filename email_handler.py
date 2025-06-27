@@ -84,9 +84,9 @@ def extract_text_from_html(html_content):
     return "\n".join(clean_lines)
 
 
-def build_gmail_query(since_hour=9):
+def build_gmail_query(timezone, since_hour=9):
     # Get current time in your timezone
-    tz = pytz.timezone("Asia/Kolkata")
+    tz = pytz.timezone(timezone)
     now = datetime.now(tz)
 
     # Get today’s date at 9 AM
@@ -100,8 +100,20 @@ def build_gmail_query(since_hour=9):
     return f"after:{after_timestamp}"
 
 
-def no_of_emails():
-    query = build_gmail_query()  # -> "after:1729813800"
+def no_of_emails(timezone, since_hour=9):
+    # Get current time in your timezone
+    tz = pytz.timezone(timezone)
+    now = datetime.now(tz)
+
+    # Get today’s date at 9 AM
+    start_time = now.replace(hour=since_hour, minute=0,
+                             second=0, microsecond=0)
+
+    # Convert to Gmail timestamp (UNIX epoch in seconds)
+    after_timestamp = int(start_time.timestamp())
+
+    # Gmail supports `after:` filter with timestamp in seconds
+    query = f"after:{after_timestamp}"  # -> "after:1729813800"
 
     creds = get_credentials()
     service = build('gmail', 'v1', credentials=creds)

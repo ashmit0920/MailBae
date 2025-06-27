@@ -28,6 +28,8 @@ export default function AuthPage() {
     setIsLoading(true);
 
     try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
       if (isLogin) {
         // Login logic
         const { error } = await supabase.auth.signInWithPassword({
@@ -56,7 +58,7 @@ export default function AuthPage() {
           email: formData.email,
           password: formData.password,
           options: {
-            data: { username: formData.username },
+            data: { username: formData.username, timezone: timezone },
           },
         });
 

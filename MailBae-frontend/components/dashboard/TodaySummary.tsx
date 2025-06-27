@@ -1,13 +1,33 @@
 import { Calendar, Mail, TrendingUp } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { useEffect, useState } from 'react'
 
 export default function TodaySummary() {
+  const [loading, setLoading] = useState(true);
+  const [timezone, setTimezone] = useState("");
+
+  useEffect(() => {
+
+    const fetchTimezone = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      const userTimezone = user?.user_metadata?.timezone;
+
+      setTimezone(userTimezone);
+      setLoading(false);
+    };
+
+    fetchTimezone();
+  });
+
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Today's Summary</h3>
         <Calendar className="w-5 h-5 text-gray-400" />
       </div>
-      
+
+      <p className="text-sm font-medium text-gray-900 mb-4">Your Timezone: <span className='text-green-600 font-semibold'>{timezone}</span></p>
+
       <div className="space-y-4">
         <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
           <div className="flex items-center space-x-3">
@@ -17,7 +37,7 @@ export default function TodaySummary() {
               <p className="text-xs text-gray-500">Since 9:00 AM</p>
             </div>
           </div>
-          <span className="text-2xl font-bold text-blue-600">23</span>
+          <span className="text-2xl font-bold text-blue-600">{loading ? "Loading..." : timezone}</span>
         </div>
 
         <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
