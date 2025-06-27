@@ -7,6 +7,7 @@ import TodaySummary from './TodaySummary';
 import SummaryCards from './SummaryCards';
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import Settings from './Settings';
 
 interface DashboardContentProps {
   onMenuClick: () => void;
@@ -73,6 +74,7 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
           <div className="bg-white rounded-2xl shadow-sm p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Settings</h2>
             <p className="text-gray-600">Manage your account settings and preferences.</p>
+            <Settings />
           </div>
         );
       default:
