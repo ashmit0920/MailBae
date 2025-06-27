@@ -1,4 +1,5 @@
 import useSWR from "swr";
+import { supabase } from '@/lib/supabase';
 
 type SummaryCategory = {
     category: string;
@@ -15,7 +16,20 @@ const categoryBgClasses = [
 ];
 
 const fetcher = async (url: string) => {
-    const res = await fetch(url, {
+    const {
+        data: { user },
+        error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+        console.error("User not found:", error);
+        return;
+    }
+
+    const timezone = user.user_metadata?.timezone;
+    const since_hour = user.user_metadata?.since_hour ?? 9;
+
+    const res = await fetch(`${url}?timezone=${timezone}&since_hour=${since_hour}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
     });

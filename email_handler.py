@@ -101,19 +101,7 @@ def build_gmail_query(timezone, since_hour=9):
 
 
 def no_of_emails(timezone, since_hour=9):
-    # Get current time in your timezone
-    tz = pytz.timezone(timezone)
-    now = datetime.now(tz)
-
-    # Get today’s date at 9 AM
-    start_time = now.replace(hour=since_hour, minute=0,
-                             second=0, microsecond=0)
-
-    # Convert to Gmail timestamp (UNIX epoch in seconds)
-    after_timestamp = int(start_time.timestamp())
-
-    # Gmail supports `after:` filter with timestamp in seconds
-    query = f"after:{after_timestamp}"  # -> "after:1729813800"
+    query = build_gmail_query(timezone, since_hour)
 
     creds = get_credentials()
     service = build('gmail', 'v1', credentials=creds)
@@ -121,11 +109,11 @@ def no_of_emails(timezone, since_hour=9):
         userId='me', q=query, maxResults=100).execute()
 
     messages = results.get('messages', [])
-    print(len(messages))
+    return len(messages)
 
 
-def fetch_todays_emails_and_summarize(service):
-    query = "in:anywhere newer_than:1d"  # Gmail query language
+def fetch_todays_emails_and_summarize(service, timezone, since_hour):
+    query = build_gmail_query(timezone, since_hour)  # Gmail query language
 
     results = service.users().messages().list(
         userId='me', q=query, maxResults=100).execute()
@@ -161,8 +149,8 @@ def fetch_todays_emails_and_summarize(service):
         print("No emails found for today.")
 
 
-def email_summarizer():
+def email_summarizer(timezone, since_hour):
     creds = get_credentials()
     service = build('gmail', 'v1', credentials=creds)
-    summary = fetch_todays_emails_and_summarize(service)
+    summary = fetch_todays_emails_and_summarize(service, timezone, since_hour)
     return summary

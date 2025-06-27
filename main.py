@@ -4,8 +4,7 @@ from pydantic import BaseModel
 from typing import List
 import uvicorn
 
-from email_handler import email_summarizer
-from gemini import generate_summary
+from email_handler import email_summarizer, no_of_emails
 
 
 class Email(BaseModel):
@@ -37,10 +36,20 @@ def health_check():
 
 
 @app.post("/api/summarize")
-def summarize_emails():
+def summarize_emails(timezone: str, since_hour: int = 9):
     try:
-        summary = email_summarizer()
+        summary = email_summarizer(timezone, since_hour)
         return {"summary": summary}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/no_of_emails")
+def fetch_emails(timezone: str, since_hour: int = 9):
+    try:
+        number = no_of_emails(timezone, since_hour)
+        return {"emails_received": number}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

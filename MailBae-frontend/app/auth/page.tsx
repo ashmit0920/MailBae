@@ -58,7 +58,7 @@ export default function AuthPage() {
           email: formData.email,
           password: formData.password,
           options: {
-            data: { username: formData.username, timezone: timezone },
+            data: { username: formData.username, timezone: timezone, since_hour: 9 },
           },
         });
 

@@ -3,20 +3,38 @@ import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react'
 
 export default function TodaySummary() {
-  const [loading, setLoading] = useState(true);
   const [timezone, setTimezone] = useState("");
+  const [since_hour, setHour] = useState(9);
+  const [num_emails, setNumEmails] = useState();
 
   useEffect(() => {
 
-    const fetchTimezone = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const userTimezone = user?.user_metadata?.timezone;
+    const fetchEmailsSinceMorning = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
 
-      setTimezone(userTimezone);
-      setLoading(false);
+      if (error || !user) {
+        console.error("User not found:", error);
+        return;
+      }
+
+      const timezone = user.user_metadata?.timezone;
+      const since_hour = user.user_metadata?.since_hour ?? 9;
+
+      setTimezone(timezone)
+      setHour(since_hour)
+
+      const res = await fetch(
+        `http://localhost:8000/api/no_of_emails?timezone=${timezone}&since_hour=${since_hour}`
+      );
+
+      const data = await res.json();
+      setNumEmails(data.emails_received);
     };
 
-    fetchTimezone();
+    fetchEmailsSinceMorning();
   });
 
   return (
@@ -34,10 +52,10 @@ export default function TodaySummary() {
             <Mail className="w-5 h-5 text-blue-500" />
             <div>
               <p className="text-sm font-medium text-gray-900">Emails Received</p>
-              <p className="text-xs text-gray-500">Since 9:00 AM</p>
+              <p className="text-xs text-gray-500">Since {since_hour}:00</p>
             </div>
           </div>
-          <span className="text-2xl font-bold text-blue-600">{loading ? "Loading..." : timezone}</span>
+          <span className="text-2xl font-bold text-blue-600">{num_emails}</span>
         </div>
 
         <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
