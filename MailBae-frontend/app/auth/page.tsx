@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -48,7 +49,7 @@ export default function AuthPage() {
         if (checkError) throw checkError;
 
         if (existingUser && existingUser.length > 0) {
-          alert('Username already taken! Please choose another.');
+          toast.error('Username already taken! Please choose another.');
           setIsLoading(false);
           return;
         }
@@ -77,14 +78,14 @@ export default function AuthPage() {
 
         if (insertError) {
           console.error('Error inserting metrics row:', insertError);
-          alert('Signup successful, but there was a problem setting up your dashboard.');
+          toast.error('Signup successful, but there was a problem setting up your dashboard.');
         }
       }
 
       // ✅ Redirect to dashboard
       router.push('/welcome');
     } catch (error: any) {
-      alert(error.message);
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
