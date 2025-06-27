@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import timezones from './timezones.json'
+import { toast } from 'sonner';
 
 const hours = Array.from({ length: 24 }, (_, i) => i);
 
@@ -48,9 +49,9 @@ export default function Settings() {
         });
 
         if (error) {
-            alert('Failed to update settings');
+            toast.error('Failed to update settings');
         } else {
-            alert('Settings updated successfully!');
+            toast.success('Settings updated successfully!');
         }
 
         setSaving(false);

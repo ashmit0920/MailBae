@@ -1,5 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'MailBae - AI-Powered Email Management',
@@ -20,7 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth" style={{ fontFamily: 'Segoe UI, system-ui, -apple-system, sans-serif' }}>
-      <body className="bg-white text-gray-900" style={{ fontFamily: 'Segoe UI, system-ui, -apple-system, sans-serif' }}>{children}</body>
+      <body className="bg-white text-gray-900" style={{ fontFamily: 'Segoe UI, system-ui, -apple-system, sans-serif' }}>
+        <Toaster theme="light" position="top-center" richColors />
+        {children}
+      </body>
     </html>
   );
 }
