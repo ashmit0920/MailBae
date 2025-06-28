@@ -8,6 +8,7 @@ import SummaryCards from './SummaryCards';
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Settings from './Settings';
+import GmailConnectButton from './ConnectGmail'
 
 interface DashboardContentProps {
   onMenuClick: () => void;
@@ -65,7 +66,7 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
       case 'insights':
         return (
           <div className="bg-white rounded-2xl shadow-sm p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Email Insights</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Email Insights (Coming Soon...)</h2>
             <p className="text-gray-600">Detailed analytics and insights about your email patterns.</p>
           </div>
         );
@@ -172,6 +173,7 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
       {/* Main Content */}
       <main className="flex-1 p-4 sm:p-6 lg:p-8">
         {renderContent()}
+        <GmailConnectButton />
       </main>
     </div>
   );
