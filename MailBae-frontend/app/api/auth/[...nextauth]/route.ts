@@ -1,9 +1,5 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from "next/headers";
-
-const supabase = createServerComponentClient({ cookies })
 
 const handler = NextAuth({
   providers: [
@@ -21,6 +17,29 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Wait until tokens are available
+      const expiresAt = account?.expires_at
+        ? new Date(account.expires_at * 1000).toISOString()
+        : null;
+  
+      // Send token data to your custom API route
+      await fetch(`${process.env.NEXTAUTH_URL}/api/store_token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user.id,
+          access_token: account?.access_token,
+          refresh_token: account?.refresh_token,
+          expires_at: expiresAt,
+          scope: account?.scope,
+          token_type: account?.token_type,
+          id_token: account?.id_token
+        })
+      });
+      return true;
+    },
+
     async jwt({ token, account }) {
 
       if (account) {
@@ -29,23 +48,9 @@ const handler = NextAuth({
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         
-        const expiresAt = account.expires_at
-        ? new Date(account.expires_at * 1000).toISOString()
-        : null;
-
-        await fetch('/api/store-token', {
-          method: 'POST',
-          body: JSON.stringify({
-            user_id: user.id, // from session or Supabase context
-            access_token: account.access_token,
-            refresh_token: account.refresh_token,
-            expires_at: expiresAt,
-            scope: account.scope,
-            token_type: account. token_type,
-            id_token: account.id_token
-          }),
-          headers: { 'Content-Type': 'application/json' },
-        });
+        // const expiresAt = account.expires_at
+        // ? new Date(account.expires_at * 1000).toISOString()
+        // : null;
         
 
         // if (error) {
