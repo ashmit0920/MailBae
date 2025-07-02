@@ -27,7 +27,7 @@ export default function TodaySummary() {
       setHour(since_hour)
 
       const res = await fetch(
-        `http://localhost:8000/api/no_of_emails?timezone=${timezone}&since_hour=${since_hour}`
+        `http://localhost:8000/api/no_of_emails?user_email=${user.email}&timezone=${timezone}&since_hour=${since_hour}`
       );
 
       const data = await res.json();

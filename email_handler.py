@@ -139,7 +139,7 @@ def fetch_todays_emails_and_summarize(service, timezone, since_hour):
 
     if emails_data:
         summary = generate_summary(emails_data)
-        # print("\n📬 Daily Summary:\n", summary)
+        print("\n📬 Daily Summary:\n", summary)
         return summary
         # print(emails_data)
     else:
@@ -148,6 +148,8 @@ def fetch_todays_emails_and_summarize(service, timezone, since_hour):
 
 def email_summarizer(user_email, timezone, since_hour):
     creds = get_credentials(user_email)
+    print("Creds:", creds)
     service = build('gmail', 'v1', credentials=creds)
+    print("Service:", service)
     summary = fetch_todays_emails_and_summarize(service, timezone, since_hour)
     return summary

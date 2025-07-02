@@ -29,7 +29,7 @@ const fetcher = async (url: string) => {
     const timezone = user.user_metadata?.timezone;
     const since_hour = user.user_metadata?.since_hour ?? 9;
 
-    const res = await fetch(`${url}?timezone=${timezone}&since_hour=${since_hour}`, {
+    const res = await fetch(`${url}?user_email=${user.email}&timezone=${timezone}&since_hour=${since_hour}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
     });

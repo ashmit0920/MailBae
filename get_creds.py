@@ -3,6 +3,7 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from supabase import create_client, Client
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 # Your env values
@@ -15,28 +16,36 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 def get_credentials(user_email: str) -> Credentials:
     # Fetch token data from Supabase
-    response = supabase \
-        .from_('gmail_tokens') \
-        .select('*') \
-        .eq('user_email', user_email) \
+    response = (
+        supabase.table("gmail_tokens")
+        .select('*')
+        .eq('user_id', user_email)
         .single()
-
-    if response.get('error'):
-        raise Exception(
-            f"Failed to fetch Gmail token: {response['error']['message']}")
-
-    token_data = response['data']
-    if not token_data:
-        raise Exception("No token found for this user.")
-
-    creds = Credentials(
-        token=token_data['access_token'],
-        refresh_token=token_data['refresh_token'],
-        token_uri='https://oauth2.googleapis.com/token',
-        client_id=os.getenv('GOOGLE_CLIENT_ID'),
-        client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
-        scopes=SCOPES
+        .execute()
     )
+
+    try:
+        if response.error:
+            raise Exception(
+                f"Failed to fetch Gmail token: {response.error.message}")
+
+        token_data = response.data
+
+        if not token_data:
+            raise Exception("No token found for this user.")
+
+        creds = Credentials(
+            token=token_data['access_token'],
+            refresh_token=token_data['refresh_token'],
+            token_uri='https://oauth2.googleapis.com/token',
+            client_id=os.getenv('GOOGLE_CLIENT_ID'),
+            client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+            scopes=SCOPES
+        )
+
+    except Exception as e:
+        print("Error creating credentials:", repr(e))
+        raise
 
     # Refresh if expired
     if not creds.valid and creds.expired and creds.refresh_token:

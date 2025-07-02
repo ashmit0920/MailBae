@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
@@ -36,8 +36,11 @@ def health_check():
 
 
 @app.post("/api/summarize")
-def summarize_emails(user_email: str, timezone: str, since_hour: int = 9):
+def summarize_emails(user_email: str = Query(...), timezone: str = Query(...), since_hour: int = Query(9)):
     try:
+        print(user_email)
+        print(timezone)
+        print(since_hour)
         summary = email_summarizer(user_email, timezone, since_hour)
         return {"summary": summary}
 
