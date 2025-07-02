@@ -38,9 +38,6 @@ def health_check():
 @app.post("/api/summarize")
 def summarize_emails(user_email: str = Query(...), timezone: str = Query(...), since_hour: int = Query(9)):
     try:
-        print(user_email)
-        print(timezone)
-        print(since_hour)
         summary = email_summarizer(user_email, timezone, since_hour)
         return {"summary": summary}
 

@@ -81,19 +81,28 @@ def extract_text_from_html(html_content):
     return "\n".join(clean_lines)
 
 
-def build_gmail_query(timezone, since_hour=9):
-    # Get current time in your timezone
+def build_gmail_query(timezone: str, since_hour: int = 9) -> str:
+    # 1. Get current time in the user’s timezone
     tz = pytz.timezone(timezone)
     now = datetime.now(tz)
 
-    # Get today’s date at 9 AM
-    start_time = now.replace(hour=since_hour, minute=0,
-                             second=0, microsecond=0)
+    # 2. Determine the correct “start day”
+    #    If it's before since_hour, use yesterday; otherwise use today
+    if now.hour < since_hour:
+        # roll back one day
+        start_day = now - timedelta(days=1)
+    else:
+        start_day = now
 
-    # Convert to Gmail timestamp (UNIX epoch in seconds)
+    # 3. Construct the start_time at since_hour
+    start_time = start_day.replace(
+        hour=since_hour, minute=0, second=0, microsecond=0
+    )
+
+    # 4. Convert to Unix epoch seconds (Gmail expects seconds)
     after_timestamp = int(start_time.timestamp())
 
-    # Gmail supports `after:` filter with timestamp in seconds
+    # 5. Return Gmail query
     return f"after:{after_timestamp}"
 
 
@@ -139,7 +148,7 @@ def fetch_todays_emails_and_summarize(service, timezone, since_hour):
 
     if emails_data:
         summary = generate_summary(emails_data)
-        print("\n📬 Daily Summary:\n", summary)
+        # print("\n📬 Daily Summary:\n", summary)
         return summary
         # print(emails_data)
     else:
@@ -148,8 +157,6 @@ def fetch_todays_emails_and_summarize(service, timezone, since_hour):
 
 def email_summarizer(user_email, timezone, since_hour):
     creds = get_credentials(user_email)
-    print("Creds:", creds)
     service = build('gmail', 'v1', credentials=creds)
-    print("Service:", service)
     summary = fetch_todays_emails_and_summarize(service, timezone, since_hour)
     return summary

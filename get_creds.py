@@ -25,9 +25,9 @@ def get_credentials(user_email: str) -> Credentials:
     )
 
     try:
-        if response.error:
-            raise Exception(
-                f"Failed to fetch Gmail token: {response.error.message}")
+        # if response.error:
+        #     raise Exception(
+        #         f"Failed to fetch Gmail token: {response.error.message}")
 
         token_data = response.data
 
@@ -44,7 +44,7 @@ def get_credentials(user_email: str) -> Credentials:
         )
 
     except Exception as e:
-        print("Error creating credentials:", repr(e))
+        print("In get_creds.py, Error creating credentials:", repr(e))
         raise
 
     # Refresh if expired
