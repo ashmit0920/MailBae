@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions, User, Account, Profile, Session, JWT } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 const handler = NextAuth({
@@ -14,54 +14,64 @@ const handler = NextAuth({
           prompt: 'consent',
         },
       },
+      // profile(profile) {
+      //   return {
+      //     id: profile.sub,
+      //     name: profile.name,
+      //     email: profile.email,
+      //     image: profile.picture,
+      //   };
+      // },
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
-      // Wait until tokens are available
+    async signIn({ user, account, profile }: { user: User, account: Account | null, profile?: Profile }) {
+      const user_id = user.email;
+      if (!user_id) {
+        console.error("No user email found during signIn");
+        return false;
+      }
+
       const expiresAt = account?.expires_at
         ? new Date(account.expires_at * 1000).toISOString()
         : null;
-  
-      // Send token data to your custom API route
-      await fetch(`${process.env.NEXTAUTH_URL}/api/store_token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: user.id,
-          access_token: account?.access_token,
-          refresh_token: account?.refresh_token,
-          expires_at: expiresAt,
-          scope: account?.scope,
-          token_type: account?.token_type,
-          id_token: account?.id_token
-        })
-      });
+
+      try {
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/store_token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id,
+            access_token: account?.access_token,
+            refresh_token: account?.refresh_token,
+            expires_at: expiresAt,
+            scope: account?.scope,
+            token_type: account?.token_type,
+            id_token: account?.id_token
+          })
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          console.error('Failed to store Gmail token:', error);
+        } else {
+          console.log('Gmail token stored successfully');
+        }
+      } catch (error) {
+        console.error('Error storing Gmail token:', error);
+      }
       return true;
     },
 
-    async jwt({ token, account }) {
-
+    async jwt({ token, account }: { token: JWT, account?: Account | null }) {
       if (account) {
-        console.log('🔒 Account:', account); // to inspect
-
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
-        
-        // const expiresAt = account.expires_at
-        // ? new Date(account.expires_at * 1000).toISOString()
-        // : null;
-        
-
-        // if (error) {
-        //   console.error('❌ Failed to store Gmail token:', error);
-        // } else {
-        //   console.log('✅ Gmail token stored successfully');
-        // }
       }
       return token;
     },
-    async session({ session, token }) {
+
+    async session({ session, token }: { session: Session, token: JWT }) {
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
       return session;
