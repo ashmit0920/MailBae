@@ -1,5 +1,11 @@
 import NextAuth, { NextAuthOptions, User, Account, Profile, Session, JWT } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 const handler = NextAuth({
   providers: [
@@ -57,6 +63,7 @@ const handler = NextAuth({
         } else {
           console.log('Gmail token stored successfully');
         }
+
       } catch (error) {
         console.error('Error storing Gmail token:', error);
       }

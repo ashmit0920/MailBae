@@ -9,28 +9,29 @@ from googleapiclient.discovery import build
 from bs4 import BeautifulSoup
 
 from gemini import generate_summary
+from get_creds import get_credentials
 
 # Scopes: change to 'readonly' if you just want to read
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 
-def get_credentials():
-    creds = None
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
+# def get_credentials():
+#     creds = None
+#     if os.path.exists('token.pickle'):
+#         with open('token.pickle', 'rb') as token:
+#             creds = pickle.load(token)
 
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'mailbae_client_secret.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+#     if not creds or not creds.valid:
+#         if creds and creds.expired and creds.refresh_token:
+#             creds.refresh(Request())
+#         else:
+#             flow = InstalledAppFlow.from_client_secrets_file(
+#                 'mailbae_client_secret.json', SCOPES)
+#             creds = flow.run_local_server(port=0)
+#         with open('token.pickle', 'wb') as token:
+#             pickle.dump(creds, token)
 
-    return creds
+#     return creds
 
 
 def get_body_from_payload(payload):
