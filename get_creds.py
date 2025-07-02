@@ -1,5 +1,4 @@
 import os
-import requests
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from supabase import create_client, Client

@@ -1,10 +1,6 @@
 from datetime import datetime, timedelta
 import pytz
-import os.path
 import base64
-import pickle
-from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from bs4 import BeautifulSoup
 
@@ -101,10 +97,10 @@ def build_gmail_query(timezone, since_hour=9):
     return f"after:{after_timestamp}"
 
 
-def no_of_emails(timezone, since_hour=9):
+def no_of_emails(user_email, timezone, since_hour=9):
     query = build_gmail_query(timezone, since_hour)
 
-    creds = get_credentials()
+    creds = get_credentials(user_email)
     service = build('gmail', 'v1', credentials=creds)
     results = service.users().messages().list(
         userId='me', q=query, maxResults=100).execute()
@@ -150,8 +146,8 @@ def fetch_todays_emails_and_summarize(service, timezone, since_hour):
         print("No emails found for today.")
 
 
-def email_summarizer(timezone, since_hour):
-    creds = get_credentials()
+def email_summarizer(user_email, timezone, since_hour):
+    creds = get_credentials(user_email)
     service = build('gmail', 'v1', credentials=creds)
     summary = fetch_todays_emails_and_summarize(service, timezone, since_hour)
     return summary

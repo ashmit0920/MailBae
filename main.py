@@ -36,9 +36,9 @@ def health_check():
 
 
 @app.post("/api/summarize")
-def summarize_emails(timezone: str, since_hour: int = 9):
+def summarize_emails(user_email: str, timezone: str, since_hour: int = 9):
     try:
-        summary = email_summarizer(timezone, since_hour)
+        summary = email_summarizer(user_email, timezone, since_hour)
         return {"summary": summary}
 
     except Exception as e:
@@ -46,9 +46,9 @@ def summarize_emails(timezone: str, since_hour: int = 9):
 
 
 @app.get("/api/no_of_emails")
-def fetch_emails(timezone: str, since_hour: int = 9):
+def fetch_emails(user_email: str, timezone: str, since_hour: int = 9):
     try:
-        number = no_of_emails(timezone, since_hour)
+        number = no_of_emails(user_email, timezone, since_hour)
         return {"emails_received": number}
 
     except Exception as e:
