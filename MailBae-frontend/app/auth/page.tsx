@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Eye, EyeOff } from 'lucide-react';
+import { Mail, Eye, EyeOff, TriangleAlert } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
@@ -150,6 +150,12 @@ export default function AuthPage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 placeholder="Enter your email"
               />
+              {!isLogin && (
+                <div className='flex items-center inline-block'>
+                  <TriangleAlert color='red' />
+                  <p className="text-gray-600 mt-2 ml-2 text-sm">Make sure to use the same email ID that you want to connect to MailBae.</p>
+                </div>
+              )}
             </div>
 
             {/* Password field */}
