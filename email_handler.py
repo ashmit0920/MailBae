@@ -121,16 +121,19 @@ def no_of_emails(user_email, timezone, since_hour=9):
 def fetch_todays_emails_and_summarize(service, timezone, since_hour):
     query = build_gmail_query(timezone, since_hour)  # Gmail query language
 
-    results = service.users().messages().list(
-        userId='me', q=query, maxResults=100).execute()
-    messages = results.get('messages', [])
+    try:
+        results = service.users().messages().list(
+            userId='me', q=query, maxResults=100).execute()
+        messages = results.get('messages', [])
+    except Exception as e:
+        print("Error in fetching emails:", repr(e))
+        raise
 
     emails_data = []
 
     for msg in messages:
         msg_data = service.users().messages().get(
             userId='me', id=msg['id'], format='full').execute()
-
         headers = msg_data['payload'].get('headers', [])
         subject = next((h['value']
                        for h in headers if h['name'] == 'Subject'), 'No Subject')
