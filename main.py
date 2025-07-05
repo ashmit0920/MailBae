@@ -5,6 +5,7 @@ from typing import List
 import uvicorn
 
 from email_handler import email_summarizer, no_of_emails
+from autoreply_agent import run_autoresponder
 
 
 class Email(BaseModel):
@@ -50,6 +51,16 @@ def fetch_emails(user_email: str, timezone: str, since_hour: int = 9):
     try:
         number = no_of_emails(user_email, timezone, since_hour)
         return {"emails_received": number}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/auto_respond")
+def auto_respond(user_email: str, timezone: str, since_hour: int = 9):
+    try:
+        result = run_autoresponder(user_email, timezone, since_hour)
+        return {"result": result}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

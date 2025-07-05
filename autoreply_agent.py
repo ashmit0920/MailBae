@@ -174,7 +174,7 @@ def fetch_emails(user_email, timezone, since_hour=9, max_results=100):
         return []
     service = build('gmail', 'v1', credentials=creds)
 
-    query = "newer_than:1d"  # build_gmail_query(timezone, since_hour)
+    query = build_gmail_query(timezone, since_hour)
 
     try:
         results = service.users().messages().list(
@@ -204,18 +204,18 @@ def fetch_emails(user_email, timezone, since_hour=9, max_results=100):
             'subject': subject,
             'body': body
         })
+
     return emails_data
 
 
-def main():
-    # NOTE: In a real application, you would not hardcode these values.
-    # You might get them from a config file, a database, or command-line arguments.
+def run_autoresponder(user_email, timezone, since_hour):
 
-    user_email = "athawait_be22@thapar.edu"
-    timezone = "Asia/Calcutta"
+    # user_email = "athawait_be22@thapar.edu"
+    # timezone = "Asia/Calcutta"
+    # since_hour = 9
 
     print(f"Fetching emails for {user_email} in timezone {timezone}...")
-    emails = fetch_emails(user_email, timezone)
+    emails = fetch_emails(user_email, timezone, since_hour)
 
     if not emails:
         print("No new emails to process.")
@@ -225,6 +225,8 @@ def main():
 
     # Process all fetched emails at once
     processed_results = process_email(emails)
+
+    return processed_results
 
     for email in emails:  # Iterate through original emails to maintain order and access original 'from'
         email_id = email['id']
@@ -247,7 +249,3 @@ def main():
             print("="*50)
         else:
             print(f"Could not find processed results for email ID: {email_id}")
-
-
-if __name__ == "__main__":
-    main()
