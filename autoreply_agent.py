@@ -1,3 +1,4 @@
+import json  # New import
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain.chat_models import init_chat_model
@@ -17,17 +18,28 @@ os.environ["GOOGLE_API_KEY"] = os.getenv("API_KEY")
 model = init_chat_model("gemini-2.0-flash", model_provider="google_genai")
 
 # Classification prompt: yes/no
-classification_prompt = PromptTemplate.from_template("""You are an email triage assistant.  
-Decide if the following email NEEDS a reply (YES/NO).
+classification_prompt = PromptTemplate.from_template("""You are an email triage assistant.
+You will receive a JSON array of email objects. For each email, decide if it NEEDS a reply (YES/NO).
 
-Subject: {subject}
+Input Emails (JSON):
+{emails_json}
 
-Body:
-{body}
+Output your response as a JSON array. Each object in the array should correspond to an input email and include its 'id', 'needs_reply' (boolean: true if YES, false if NO), and 'reason' (string: brief rationale).
+DO NOT WRAP THE OUTPUT IN CODE BLOCKS LIKE ```json. Simply return the JSON array in a text/string format.
 
-Answer in the format:
-NEEDS_REPLY: YES or NO
-REASON: <brief rationale>
+Example Output:
+[
+  {{
+    "id": "email_id_1",
+    "needs_reply": true,
+    "reason": "The sender is asking a direct question."
+  }},
+  {{
+    "id": "email_id_2",
+    "needs_reply": false,
+    "reason": "This is an automated notification."
+  }}
+]
 """,
                                                      )
 
@@ -37,47 +49,132 @@ classify_chain = classification_prompt | model | StrOutputParser()
 # Drafting prompt
 draft_prompt = PromptTemplate.from_template("""You are a helpful email assistant that drafts professional replies.
 Avoid jargon and use simple, human language and natural tone.
-Here is an incoming email:
+You will receive a JSON array of email objects that require a reply. For each email, draft a concise but friendly reply, addressing the sender's points.
 
-Subject: {subject}
+Input Emails (JSON):
+{emails_to_draft_json}
 
-Body:
-{body}
+Output your response as a JSON array. Each object in the array should correspond to an input email and include its 'id' and 'draft' (string: the drafted reply).
+DO NOT WRAP THE OUTPUT IN CODE BLOCKS LIKE ```json. Simply return the JSON array in a text/string format.
 
-Write a concise but friendly reply, addressing the sender's points.
+Example Output:
+[
+  {{
+    "id": "email_id_1",
+    "draft": "Hi [Sender Name], Thanks for your email. I'll look into this and get back to you soon."
+  }},
+  {{
+    "id": "email_id_3",
+    "draft": "Hello, I've received your request and will process it shortly."
+  }}
+]
 """,
                                             )
 
 draft_chain = draft_prompt | model | StrOutputParser()
 
 
-def process_email(subject: str, body: str) -> dict:
-    # 1) Classify
-    cls = classify_chain.invoke({"subject": subject, "body": body})
-    needs = "YES" if "YES" in cls.split("NEEDS_REPLY:")[1] else "NO"
+def process_email(emails: list[dict]) -> dict:
+    """
+    Processes a list of emails in a batch for classification and drafting.
+    Args:
+        emails: A list of dictionaries, where each dictionary represents an email
+                and must contain 'id', 'subject', and 'body' keys.
+    Returns:
+        A dictionary where keys are email IDs and values are dictionaries
+        containing 'needs_reply', 'classification_rationale', and 'draft' (if any).
+    """
+    if not emails:
+        return {}
 
-    result = {
-        "needs_reply": needs == "YES",
-        "classification_rationale": cls.split("REASON:")[1],
+    # Prepare emails for classification
+    emails_for_classification = []
+    for email in emails:
+        emails_for_classification.append({
+            "id": email['id'],
+            "subject": email['subject'],
+            "body": email['body']
+        })
+    emails_json_str = json.dumps(emails_for_classification)
+
+    # 1) Classify all emails in batch
+    classification_raw_output = classify_chain.invoke(
+        {"emails_json": emails_json_str})
+
+    cleaned_classification_output = classification_raw_output.strip()
+    if cleaned_classification_output.startswith("```json") and cleaned_classification_output.endswith("```"):
+        cleaned_classification_output = cleaned_classification_output[len(
+            "```json"):-len("```")].strip()
+
+    try:
+        classified_results = json.loads(cleaned_classification_output)
+    except json.JSONDecodeError as e:
+        print(
+            f"Error decoding classification JSON: {cleaned_classification_output} \n{repr(e)}")
+        # Fallback or error handling: assume no replies needed if parsing fails
+        return {email['id']: {"needs_reply": False, "classification_rationale": "JSON parsing failed", "draft": None} for email in emails}
+
+    # Map classified results by ID for easy lookup
+    classified_map = {res['id']: res for res in classified_results}
+
+    # Prepare results structure
+    final_results = {email['id']: {
+        "needs_reply": classified_map.get(email['id'], {}).get('needs_reply', False),
+        "classification_rationale": classified_map.get(email['id'], {}).get('reason', 'No rationale provided'),
         "draft": None,
-    }
+    } for email in emails}
 
-    # 2) If it needs a reply, generate one
-    if result["needs_reply"]:
-        draft = draft_chain.invoke({"subject": subject, "body": body})
-        result["draft"] = draft.strip()
+    # Identify emails that need a reply for drafting
+    emails_to_draft = []
+    for email in emails:
+        if final_results[email['id']]['needs_reply']:
+            emails_to_draft.append({
+                "id": email['id'],
+                "subject": email['subject'],
+                "body": email['body']
+            })
 
-    return result
+    # 2) If any emails need a reply, generate drafts in batch
+    if emails_to_draft:
+        emails_to_draft_json_str = json.dumps(emails_to_draft)
+
+        drafting_raw_output = draft_chain.invoke(
+            {"emails_to_draft_json": emails_to_draft_json_str})
+
+        # Clean the output by removing markdown code block wrappers
+        cleaned_drafting_output = drafting_raw_output.strip()
+        if cleaned_drafting_output.startswith("```json") and cleaned_drafting_output.endswith("```"):
+            cleaned_drafting_output = cleaned_drafting_output[len(
+                "```json"):-len("```")].strip()
+
+        try:
+            drafted_results = json.loads(cleaned_drafting_output)
+        except json.JSONDecodeError:
+            print(f"Error decoding drafting JSON: {cleaned_drafting_output}")
+            # Continue without drafts if parsing fails
+            drafted_results = []
+
+        # Map drafted results by ID
+        drafted_map = {res['id']: res for res in drafted_results}
+
+        # Update final results with drafts
+        for email_id, result_data in final_results.items():
+            if result_data['needs_reply'] and email_id in drafted_map:
+                final_results[email_id]['draft'] = drafted_map[email_id]['draft'].strip(
+                )
+
+    return final_results
 
 
-def fetch_emails(user_email, timezone, since_hour=9, max_results=5):
-    """Fetches recent emails from Gmail."""
+def fetch_emails(user_email, timezone, since_hour=9, max_results=100):
+
     creds = get_credentials(user_email)
     if not creds:
         print("Could not get credentials. Please check your setup.")
         return []
     service = build('gmail', 'v1', credentials=creds)
-    query = build_gmail_query(timezone, since_hour)
+
+    query = "newer_than:1d"  # build_gmail_query(timezone, since_hour)
 
     try:
         results = service.users().messages().list(
@@ -114,9 +211,8 @@ def main():
     # NOTE: In a real application, you would not hardcode these values.
     # You might get them from a config file, a database, or command-line arguments.
 
-    # IMPORTANT: Replace with a valid email address
     user_email = "athawait_be22@thapar.edu"
-    timezone = "Asia/Calcutta"      # IMPORTANT: Replace with your timezone
+    timezone = "Asia/Calcutta"
 
     print(f"Fetching emails for {user_email} in timezone {timezone}...")
     emails = fetch_emails(user_email, timezone)
@@ -125,26 +221,32 @@ def main():
         print("No new emails to process.")
         return
 
-    print(f"\nFound {len(emails)} emails to process.\n")
+    print(f"Found {len(emails)} emails to process.")
 
-    for email in emails:
-        print("="*50)
-        print(f"Processing email from: {email['from']}")
-        # print(f"Subject: {email['subject']}")
+    # Process all fetched emails at once
+    processed_results = process_email(emails)
 
-        # Use the existing agent to process the email
-        result = process_email(subject=email['subject'], body=email['body'])
+    for email in emails:  # Iterate through original emails to maintain order and access original 'from'
+        email_id = email['id']
+        result = processed_results.get(email_id)
 
-        print("\n--- Classification ---")
-        print(f"Needs Reply: {result['needs_reply']}")
-        print(f"Rationale: {result['classification_rationale'].strip()}")
+        if result:
+            print("="*50)
+            print(f"Processing email from: {email['from']}")
+            print(f"Subject: {email['subject']}")  # Added subject for clarity
 
-        if result['needs_reply']:
-            print("\n--- Drafted Reply ---")
-            print(result['draft'])
+            print("--- Classification - --")
+            print(f"Needs Reply: {result['needs_reply']}")
+            print(f"Rationale: {result['classification_rationale'].strip()}")
+
+            if result['needs_reply']:
+                print("--- Drafted Reply - --")
+                print(result['draft'])
+            else:
+                print("No reply needed.")
+            print("="*50)
         else:
-            print("\nNo reply needed.")
-        print("="*50)
+            print(f"Could not find processed results for email ID: {email_id}")
 
 
 if __name__ == "__main__":
