@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Mail, Filter, MessageSquare, Calendar } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 const steps = [
   {
@@ -55,7 +55,7 @@ export default function HowItWorks() {
     return () => clearInterval(interval);
   }, []);
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -66,7 +66,7 @@ export default function HowItWorks() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -78,7 +78,7 @@ export default function HowItWorks() {
     }
   };
 
-  const stepContentVariants = {
+  const stepContentVariants: Variants = {
     hidden: { opacity: 0, x: 50 },
     visible: {
       opacity: 1,
@@ -98,7 +98,7 @@ export default function HowItWorks() {
     }
   };
 
-  const iconVariants = {
+  const iconVariants: Variants = {
     hidden: { scale: 0, rotate: -180 },
     visible: {
       scale: 1,

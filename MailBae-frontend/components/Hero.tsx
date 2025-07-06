@@ -2,7 +2,7 @@
 
 import { ArrowRight, Star, Play } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants } from 'framer-motion';
 import { useRef } from 'react';
 import RotatingText from './ui/RotatingText/RotatingText';
 
@@ -29,7 +29,7 @@ export default function Hero() {
     router.push('/auth');
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -40,7 +40,7 @@ export default function Hero() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -52,7 +52,7 @@ export default function Hero() {
     }
   };
 
-  const imageVariants = {
+  const imageVariants: Variants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
     visible: {
       opacity: 1,
