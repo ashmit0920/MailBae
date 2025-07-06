@@ -1,7 +1,7 @@
 'use client';
 
 import { Star } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
 const testimonials = [
@@ -35,7 +35,7 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -46,7 +46,7 @@ export default function Testimonials() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -58,7 +58,7 @@ export default function Testimonials() {
     }
   };
 
-  const cardVariants = {
+  const cardVariants: Variants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
     visible: (i: number) => ({
       opacity: 1,
@@ -72,7 +72,7 @@ export default function Testimonials() {
     })
   };
 
-  const starVariants = {
+  const starVariants: Variants = {
     hidden: { scale: 0, rotate: -180 },
     visible: (i: number) => ({
       scale: 1,
@@ -85,7 +85,7 @@ export default function Testimonials() {
     })
   };
 
-  const ctaVariants = {
+  const ctaVariants: Variants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
     visible: {
       opacity: 1,
