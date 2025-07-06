@@ -113,7 +113,7 @@ export default function Hero() {
 
         {/* Main Title */}
         <motion.h1
-          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-10 leading-tight"
           variants={itemVariants}
         >
           Don't kill your reachability.{' '}
@@ -125,7 +125,7 @@ export default function Hero() {
 
         {/* Trusted by section */}
         <motion.h3
-          className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight"
+          className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-8 leading-tight"
           variants={itemVariants}
         >
           Trusted by

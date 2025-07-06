@@ -1,4 +1,5 @@
-import NextAuth, { NextAuthOptions, User, Account, Profile, Session, JWT } from "next-auth";
+import NextAuth, { NextAuthOptions, User, Account, Profile, Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 import { createClient } from '@supabase/supabase-js';
 
