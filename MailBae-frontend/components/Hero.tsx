@@ -81,9 +81,9 @@ export default function Hero() {
           ),
           radial-gradient(
             ellipse 400px 300px at 85% 20%,
-            rgba(59, 130, 246, 0.16) 0%,
+            rgba(59, 130, 246, 0.14) 0%,
             rgba(147, 51, 234, 0.12) 30%,
-            rgba(99, 102, 241, 0.10) 60%,
+            rgba(99, 102, 241, 0.08) 60%,
             transparent 80%
           ),
           linear-gradient(
@@ -172,7 +172,7 @@ export default function Hero() {
             whileTap={{ scale: 0.98 }}
           >
             <Play className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
-            <span>Watch Demo</span>
+            <span>Learn More</span>
           </motion.button>
         </motion.div>
 
@@ -204,7 +204,7 @@ export default function Hero() {
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/30 pointer-events-none" />
 
               {/* Main content area with bottom fade effect */}
-              <div className="aspect-[16/10] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
+              <div className="aspect-[16/8] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
                 {/* Bottom fade gradient overlay */}
                 <div
                   className="absolute inset-0 pointer-events-none"
@@ -222,14 +222,19 @@ export default function Hero() {
 
                 {/* Placeholder for dashboard image */}
                 <div className="text-center space-y-4 relative z-10">
-                  <div className="w-16 h-16 bg-blue-500 rounded-2xl mx-auto flex items-center justify-center">
+                  <img
+                    src="/dashboard.png"
+                    alt="MailBae Dashboard Preview"
+                    className="w-full h-full object-cover"
+                  />
+                  {/* <div className="w-16 h-16 bg-blue-500 rounded-2xl mx-auto flex items-center justify-center">
                     <div className="w-8 h-8 bg-white rounded-lg" />
                   </div>
                   <div className="space-y-2">
                     <div className="h-4 bg-gray-300 rounded-full w-48 mx-auto" />
                     <div className="h-3 bg-gray-200 rounded-full w-32 mx-auto" />
-                  </div>
-                  <p className="text-gray-500 text-sm font-medium">Dashboard Preview</p>
+                  </div> */}
+                  {/* <p className="text-gray-500 text-sm font-medium">Dashboard Preview</p> */}
                 </div>
               </div>
 

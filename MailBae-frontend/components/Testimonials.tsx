@@ -2,6 +2,7 @@
 
 import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 const testimonials = [
   {
@@ -98,24 +99,30 @@ export default function Testimonials() {
     }
   };
 
+  const router = useRouter();
+
+  const handleGetStarted = () => {
+    router.push('/auth');
+  };
+
   return (
     <section id="testimonials" className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          <motion.h2 
+          <motion.h2
             className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"
             variants={itemVariants}
           >
             Loved by early adopters
           </motion.h2>
-          <motion.p 
+          <motion.p
             className="text-xl text-gray-600 max-w-2xl mx-auto"
             variants={itemVariants}
           >
@@ -124,7 +131,7 @@ export default function Testimonials() {
         </motion.div>
 
         {/* Testimonials Grid */}
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           initial="hidden"
           whileInView="visible"
@@ -136,7 +143,7 @@ export default function Testimonials() {
               className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-200 border border-gray-100"
               custom={index}
               variants={cardVariants}
-              whileHover={{ 
+              whileHover={{
                 y: -8,
                 boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.15)"
               }}
@@ -159,7 +166,7 @@ export default function Testimonials() {
               </div>
 
               {/* Quote */}
-              <motion.blockquote 
+              <motion.blockquote
                 className="text-gray-700 text-lg mb-6 leading-relaxed"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -170,7 +177,7 @@ export default function Testimonials() {
               </motion.blockquote>
 
               {/* Author */}
-              <motion.div 
+              <motion.div
                 className="flex items-center space-x-4"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -198,14 +205,14 @@ export default function Testimonials() {
         </motion.div>
 
         {/* Call to Action */}
-        <motion.div 
+        <motion.div
           className="text-center mt-16"
           variants={ctaVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          <motion.div 
+          <motion.div
             className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-3xl p-8 max-w-2xl mx-auto relative overflow-hidden"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
@@ -214,9 +221,9 @@ export default function Testimonials() {
             <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-600/20" />
             <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-white/10" />
             <div className="absolute bottom-4 left-4 w-16 h-16 rounded-full bg-white/10" />
-            
+
             <div className="relative z-10">
-              <motion.h3 
+              <motion.h3
                 className="text-2xl font-bold mb-4"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -225,7 +232,7 @@ export default function Testimonials() {
               >
                 Join thousands of satisfied users
               </motion.h3>
-              <motion.p 
+              <motion.p
                 className="text-blue-100 mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -234,7 +241,7 @@ export default function Testimonials() {
               >
                 Start your free trial today and experience the difference
               </motion.p>
-              <motion.button 
+              <motion.button
                 className="bg-white text-blue-500 hover:bg-gray-100 px-8 py-3 rounded-2xl font-semibold transition-colors duration-200"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -242,6 +249,7 @@ export default function Testimonials() {
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
                 viewport={{ once: true }}
+                onClick={handleGetStarted}
               >
                 Get Started Free
               </motion.button>
