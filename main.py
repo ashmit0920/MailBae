@@ -56,8 +56,8 @@ def fetch_emails(user_email: str, timezone: str, since_hour: int = 9):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/auto_respond")
-def auto_respond(user_email: str, timezone: str, since_hour: int = 9):
+@app.post("/api/auto_respond")
+def auto_respond(user_email: str = Query(...), timezone: str = Query(...), since_hour: int = Query(9)):
     try:
         result = run_autoresponder(user_email, timezone, since_hour)
         return {"result": result}

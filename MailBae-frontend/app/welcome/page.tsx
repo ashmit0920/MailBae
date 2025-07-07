@@ -19,7 +19,7 @@ export default function WelcomePage() {
       const { data: { session } } = await supabase.auth.getSession()
 
       if (!session) {
-        router.push('/login')
+        router.push('/auth')
       } else {
         const { data: { user } } = await supabase.auth.getUser()
         setUser(user)

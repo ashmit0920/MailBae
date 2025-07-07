@@ -1,11 +1,10 @@
-import json  # New import
+import json
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain.chat_models import init_chat_model
 from dotenv import load_dotenv
 import os
 
-# New imports for Gmail API
 from googleapiclient.discovery import build
 from get_creds import get_credentials
 from email_handler import build_gmail_query, get_body_from_payload

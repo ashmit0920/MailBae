@@ -8,6 +8,7 @@ import {
   FileText,
   Lightbulb,
   Settings,
+  MessageSquareQuoteIcon,
   LogOut,
   X
 } from 'lucide-react';
@@ -22,6 +23,7 @@ interface SidebarProps {
 const navigation = [
   { name: 'Dashboard', id: 'dashboard', icon: BarChart3 },
   { name: 'Summaries', id: 'summaries', icon: FileText },
+  { name: 'Auto Replies', id: 'autoreplies', icon: MessageSquareQuoteIcon },
   { name: 'Email Insights', id: 'insights', icon: Lightbulb },
   { name: 'Settings', id: 'settings', icon: Settings },
 ];

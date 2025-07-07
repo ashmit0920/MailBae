@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Settings from './Settings';
 import GmailConnectButton from './ConnectGmail'
+import AutoReply from './AutoReply'
 
 interface DashboardContentProps {
   onMenuClick: () => void;
@@ -61,6 +62,13 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
           <div className="bg-white rounded-2xl shadow-sm p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Today's Email Summary</h2>
             <SummaryCards />
+          </div>
+        );
+      case 'autoreplies':
+        return (
+          <div className="bg-white rounded-2xl shadow-sm p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Today's Reply Drafts</h2>
+            <AutoReply />
           </div>
         );
       case 'insights':
@@ -118,6 +126,7 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
               <RecentAlerts />
               <TodaySummary />
             </div>
+            <GmailConnectButton />
           </>
         );
     }
@@ -163,7 +172,7 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
 
               {/* Profile */}
               <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">S</span>
+                <span className="text-white text-sm font-medium">{username.slice(0, 1).toUpperCase()}</span>
               </div>
             </div>
           </div>
@@ -173,7 +182,6 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
       {/* Main Content */}
       <main className="flex-1 p-4 sm:p-6 lg:p-8">
         {renderContent()}
-        <GmailConnectButton />
       </main>
     </div>
   );
