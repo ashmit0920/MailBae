@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Eye, EyeOff, TriangleAlert } from 'lucide-react';
+import { Mail, Eye, EyeOff, TriangleAlert, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -24,6 +25,24 @@ export default function AuthPage() {
     });
   };
 
+  const validations = [
+    { label: "At least 8 characters", valid: password.length >= 8 },
+    { label: "A lowercase letter (a-z)", valid: /[a-z]/.test(password) },
+    { label: "An uppercase letter (A-Z)", valid: /[A-Z]/.test(password) },
+    { label: "A number (0-9)", valid: /\d/.test(password) },
+    { label: "A symbol (!@#$)", valid: /[^A-Za-z0-9]/.test(password) },
+  ];
+
+  const isPasswordStrong = (password: string): boolean => {
+    return (
+      password.length >= 8 &&
+      /[a-z]/.test(password) &&
+      /[A-Z]/.test(password) &&
+      /\d/.test(password) &&
+      /[^A-Za-z0-9]/.test(password)
+    );
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -35,7 +54,7 @@ export default function AuthPage() {
         // Login logic
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
-          password: formData.password,
+          password: password,
         });
 
         if (error) throw error;
@@ -55,9 +74,14 @@ export default function AuthPage() {
         }
 
         // 2. Sign up the user
+        if (!isPasswordStrong(password)) {
+          toast.error("Password must be atleast 8 characters and include uppercase, lowercase, number, symbol")
+          return;
+        }
+
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email: formData.email,
-          password: formData.password,
+          password: password,
           options: {
             data: { username: formData.username, timezone: timezone, since_hour: 9 },
           },
@@ -169,8 +193,8 @@ export default function AuthPage() {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  value={formData.password}
-                  onChange={handleInputChange}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your password"
                 />
@@ -186,6 +210,25 @@ export default function AuthPage() {
                   )}
                 </button>
               </div>
+
+              {/* Password Checklist */}
+              {!isLogin && password && (
+                <ul className="space-y-1 text-sm">
+                  {validations.map((item, index) => (
+                    <li
+                      key={index}
+                      className={`flex items-center gap-2 ${item.valid ? "text-green-600" : "text-red-500"
+                        }`}
+                    >
+                      {item.valid ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : (
+                        <XCircle className="w-4 h-4" />
+                      )}
+                      {item.label}
+                    </li>
+                  ))}
+                </ul>)}
             </div>
 
             {/* Submit button */}
