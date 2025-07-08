@@ -30,11 +30,13 @@ Example Output:
 [
   {{
     "id": "email_id_1",
+    "from": "sender_1",
     "needs_reply": true,
     "reason": "The sender is asking a direct question."
   }},
   {{
     "id": "email_id_2",
+    "from": "sender_2",
     "needs_reply": false,
     "reason": "This is an automated notification."
   }}
@@ -91,6 +93,7 @@ def process_email(emails: list[dict]) -> dict:
     for email in emails:
         emails_for_classification.append({
             "id": email['id'],
+            "from": email['from'],
             "subject": email['subject'],
             "body": email['body']
         })
@@ -118,6 +121,7 @@ def process_email(emails: list[dict]) -> dict:
 
     # Prepare results structure
     final_results = {email['id']: {
+        "sender": classified_map.get(email['id'], {}).get('from', 'Unknown Sender'),
         "needs_reply": classified_map.get(email['id'], {}).get('needs_reply', False),
         "classification_rationale": classified_map.get(email['id'], {}).get('reason', 'No rationale provided'),
         "draft": None,
@@ -129,6 +133,7 @@ def process_email(emails: list[dict]) -> dict:
         if final_results[email['id']]['needs_reply']:
             emails_to_draft.append({
                 "id": email['id'],
+                "from": email['from'],
                 "subject": email['subject'],
                 "body": email['body']
             })
@@ -227,24 +232,24 @@ def run_autoresponder(user_email, timezone, since_hour):
 
     return processed_results
 
-    for email in emails:  # Iterate through original emails to maintain order and access original 'from'
-        email_id = email['id']
-        result = processed_results.get(email_id)
+    # for email in emails:  # Iterate through original emails to maintain order and access original 'from'
+    #     email_id = email['id']
+    #     result = processed_results.get(email_id)
 
-        if result:
-            print("="*50)
-            print(f"Processing email from: {email['from']}")
-            print(f"Subject: {email['subject']}")  # Added subject for clarity
+    #     if result:
+    #         print("="*50)
+    #         print(f"Processing email from: {email['from']}")
+    #         print(f"Subject: {email['subject']}")  # Added subject for clarity
 
-            print("--- Classification - --")
-            print(f"Needs Reply: {result['needs_reply']}")
-            print(f"Rationale: {result['classification_rationale'].strip()}")
+    #         print("--- Classification - --")
+    #         print(f"Needs Reply: {result['needs_reply']}")
+    #         print(f"Rationale: {result['classification_rationale'].strip()}")
 
-            if result['needs_reply']:
-                print("--- Drafted Reply - --")
-                print(result['draft'])
-            else:
-                print("No reply needed.")
-            print("="*50)
-        else:
-            print(f"Could not find processed results for email ID: {email_id}")
+    #         if result['needs_reply']:
+    #             print("--- Drafted Reply - --")
+    #             print(result['draft'])
+    #         else:
+    #             print("No reply needed.")
+    #         print("="*50)
+    #     else:
+    #         print(f"Could not find processed results for email ID: {email_id}")

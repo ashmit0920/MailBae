@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 
 // Optional: Define the shape of each reply
 type AutoReply = {
+    sender: string,
     needs_reply: boolean;
     classification_rationale: string;
     draft: string;
@@ -49,15 +50,16 @@ export default function AutoReply() {
 
     return (
         <div className="space-y-6">
-            {Object.entries(data).map(([sender, details]) => {
-                const { needs_reply, classification_rationale, draft } = details;
+            {Object.entries(data).map(([id, details]) => {
+                const { sender, needs_reply, classification_rationale, draft } = details;
 
                 return (
                     <div
-                        key={sender}
+                        key={id}
                         className="border p-4 rounded-lg shadow-sm bg-white space-y-2"
                     >
-                        <p className="font-semibold text-gray-700">From: {sender}</p>
+                        <p className="font-semibold text-gray-700">ID: {id}</p>
+                        <p className="text-sm text-gray-600">Sender: {sender}</p>
                         <p className="text-sm text-gray-600">
                             Needs Reply: {needs_reply ? "✅ Yes" : "❌ No"}
                         </p>
