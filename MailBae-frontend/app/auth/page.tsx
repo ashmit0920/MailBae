@@ -75,7 +75,7 @@ export default function AuthPage() {
 
         // 2. Sign up the user
         if (!isPasswordStrong(password)) {
-          toast.error("Password must be atleast 8 characters and include uppercase, lowercase, number, symbol")
+          toast.error("Password must be atleast 8 characters and include uppercase, lowercase, number, symbol.")
           return;
         }
 
