@@ -66,7 +66,7 @@ export default function DashboardContent({ onMenuClick, activeSection, username 
         );
       case 'autoreplies':
         return (
-          <div className="bg-white rounded-2xl shadow-sm p-8">
+          <div className="bg-white rounded-2xl shadow-sm p-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Today's Reply Drafts</h2>
             <AutoReply />
           </div>
