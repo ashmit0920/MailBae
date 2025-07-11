@@ -48,13 +48,17 @@ def get_credentials(user_email: str) -> Credentials:
         raise
 
     # Refresh if expired
-    if not creds.valid and creds.expired and creds.refresh_token:
-        creds.refresh(Request())
+    if not creds.valid:
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
 
-        # Optionally update the new access_token and expiry in Supabase
-        supabase.from_('gmail_tokens').update({
-            'access_token': creds.token,
-            'expires_at': creds.expiry.isoformat() if creds.expiry else None
-        }).eq('user_email', user_email).execute()
+            # Optionally update the new access_token and expiry in Supabase
+            supabase.from_('gmail_tokens').update({
+                'access_token': creds.token,
+                'expires_at': creds.expiry.isoformat() if creds.expiry else None
+            }).eq('user_email', user_email).execute()
+        else:
+            raise Exception(
+                "get_cred.py: No valid credentials or refresh token.")
 
     return creds

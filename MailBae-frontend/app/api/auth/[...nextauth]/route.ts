@@ -15,10 +15,11 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: 'openid email profile https://www.googleapis.com/auth/gmail.modify',
+          scope: 'openid email profile https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.readonly',
           response_type: 'code',
           access_type: 'offline',
-          prompt: 'consent',
+          include_granted_scopes: 'true',
+          prompt: 'consent select_account',
         },
       },
       // profile(profile) {
@@ -75,6 +76,9 @@ const handler = NextAuth({
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
+
+        console.log("🔍 Google granted scopes:", account.scope);
+
       }
       return token;
     },
