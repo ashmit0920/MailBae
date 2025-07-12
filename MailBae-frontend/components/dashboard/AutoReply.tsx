@@ -1,3 +1,5 @@
+'use client'
+
 import useSWR from "swr";
 import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
@@ -45,7 +47,12 @@ export default function AutoReply() {
     const { data, error, isLoading } = useSWR(
         "http://localhost:8000/api/auto_respond",
         fetcher,
-        { revalidateOnFocus: false }
+        {
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+            revalidateIfStale: false,
+            // revalidateOnMount: false,
+        }
     );
 
     if (isLoading) {

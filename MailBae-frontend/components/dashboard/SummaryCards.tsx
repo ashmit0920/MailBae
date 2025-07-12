@@ -1,3 +1,5 @@
+'use client'
+
 import useSWR from "swr";
 import { supabase } from '@/lib/supabase';
 
@@ -42,7 +44,11 @@ export default function SummaryCards() {
         "http://localhost:8000/api/summarize",
         fetcher,
         {
-            revalidateOnFocus: false, // optional: don't refetch on tab switch
+            // don't refetch everytime, store in cache
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+            revalidateIfStale: false,
+            // revalidateOnMount: false,
         }
     );
 

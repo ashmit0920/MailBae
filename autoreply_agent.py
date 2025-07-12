@@ -23,7 +23,7 @@ You will receive a JSON array of email objects. For each email, decide if it NEE
 Input Emails (JSON):
 {emails_json}
 
-Output your response as a JSON array. Each object in the array should correspond to an input email and include its 'id', 'needs_reply' (boolean: true if YES, false if NO), and 'reason' (string: brief rationale).
+Output your response as a JSON array. Each object in the array should correspond to an input email and include its 'id', 'from', 'needs_reply' (boolean: true if YES, false if NO), and 'reason' (string: brief rationale). Do not leave any of these fields blank.
 DO NOT WRAP THE OUTPUT IN CODE BLOCKS LIKE ```json. Simply return the JSON array in a text/string format.
 
 Example Output:
