@@ -1,6 +1,13 @@
-# MailBae
+<h1 align="center">MailBae</h1>
+<h3 align="center">Your AI Inbox Manager</h3>
 
-MailBae is your personal AI agent that reads emails, summarizes them, auto-drafts replies, and helps you declutter your inbox - so you focus only on what matters.
+<p align="center">
+  <img src="https://img.shields.io/badge/Built%20with-FastAPI-blue" />
+  <img src="https://img.shields.io/badge/Frontend-Next.js%20%2B%20Tailwind-0ea5e9" />
+  <img src="https://img.shields.io/badge/AI-Powered%20by%20Gemini-ffca28" />
+</p>
+
+[MailBae](https://mailbae.vercel.app) is your personal AI agent that reads emails, summarizes them, auto-drafts replies, and helps you declutter your inbox - so you focus only on what matters.
 
 ## 🌟 Features
 
