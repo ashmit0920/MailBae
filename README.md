@@ -92,7 +92,22 @@ Visit ```http://localhost:3000``` to get started.
 
 ## Screenshots
 
-Coming soon! (Dark mode, summary cards, and AI-reply previews)
+Landing Page
+
+![landing](./assets/landing.png)
+
+Dashboard
+
+![landing](./assets/dashboard.png)
+
+Daily Summary section
+
+![landing](./assets/summary.png)
+
+Auto-Responder
+
+![landing](./assets/auto_reply.png)
+
 
 ## Contact & Feedback
 
