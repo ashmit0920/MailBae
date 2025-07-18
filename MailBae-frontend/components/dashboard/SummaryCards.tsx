@@ -10,6 +10,7 @@ type SummaryCategory = {
 
 // pastel-ish backgrounds; cycle through as needed
 const categoryBgClasses = [
+    //"bg-gradient-to-r from-white via-blue-50/40 to-blue-100/60",
     "bg-blue-50",
     "bg-green-50",
     "bg-yellow-50",
@@ -73,8 +74,8 @@ export default function SummaryCards() {
                                 key={i}
                                 className={`
                   ${categoryBgClasses[idx % categoryBgClasses.length]}
-                  p-6 rounded-2xl shadow-sm border border-gray-100
-                  hover:shadow-lg transition-shadow duration-200
+                  p-6 rounded-2xl shadow-lg border border-gray-200
+                  hover:shadow-xl transition-shadow duration-200
                 `}
                             >
                                 <p className="text-gray-700 leading-relaxed">{point}</p>

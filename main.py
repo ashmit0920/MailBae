@@ -1,21 +1,18 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import List
 import uvicorn
 
-from email_handler import email_summarizer, no_of_emails
+from email_handler import email_summarizer, no_of_emails, send_message
 from autoreply_agent import run_autoresponder
 
 
-class Email(BaseModel):
-    from_: str
+class EmailPayload(BaseModel):
+    user_email: EmailStr
+    to: EmailStr
     subject: str
-    body: str
-
-
-class EmailList(BaseModel):
-    emails: List[Email]
+    message: str
 
 
 # FastAPI app
@@ -64,6 +61,22 @@ def auto_respond(user_email: str = Query(...), timezone: str = Query(...), since
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/send_email")
+async def send_email(payload: EmailPayload):
+
+    result = send_message(
+        sender=payload.user_email,
+        to=payload.to,
+        subject=payload.subject,
+        message_text=payload.message,
+    )
+
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to send email")
+
+    return {"status": "success", "message_id": result["id"]}
 
 
 if __name__ == "__main__":

@@ -3,6 +3,8 @@ import pytz
 import base64
 from googleapiclient.discovery import build
 from bs4 import BeautifulSoup
+from email.mime.text import MIMEText
+from google.oauth2.credentials import Credentials
 
 from gemini import generate_summary
 from get_creds import get_credentials
@@ -103,7 +105,7 @@ def build_gmail_query(timezone: str, since_hour: int = 9) -> str:
     after_timestamp = int(start_time.timestamp())
 
     # 5. Return Gmail query
-    return f"after:{after_timestamp}"
+    return f"in:inbox -in:sent after:{after_timestamp}"
 
 
 def no_of_emails(user_email, timezone, since_hour=9):
@@ -163,3 +165,29 @@ def email_summarizer(user_email, timezone, since_hour):
     service = build('gmail', 'v1', credentials=creds)
     summary = fetch_todays_emails_and_summarize(service, timezone, since_hour)
     return summary
+
+
+def create_message(sender, to, subject, message_text):
+    """Create a MIMEText email and encode it in base64 for Gmail API."""
+    message = MIMEText(message_text)
+    message['to'] = to
+    message['from'] = sender
+    message['subject'] = subject
+
+    raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
+    return {'raw': raw}
+
+
+def send_message(sender: str, to: str, subject: str, message_text: str):
+    """Use Gmail API to send an email using user credentials."""
+    try:
+        creds = get_credentials(sender)
+        service = build('gmail', 'v1', credentials=creds)
+        message = create_message(sender, to, subject, message_text)
+        sent_msg = service.users().messages().send(userId="me", body=message).execute()
+        print(f"✅ Message sent! ID: {sent_msg['id']}")
+        return sent_msg
+
+    except Exception as e:
+        print(f"❌ Error sending email: {e}")
+        return None
